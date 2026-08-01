@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Аренда съёмочной техники — СЕВЕРСВЕТ | Москва и МО</title>
+<meta name="description" content="Парк съёмочной техники СЕВЕРСВЕТ в аренду: 4 кинокамеры, кинооптика и анаморфоты, свет, звук, грип, стабилизация, эфирный тракт. Москва и МО, командировки по всей России.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='a' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%232DD4A7'/%3E%3Cstop offset='.5' stop-color='%2338BDF8'/%3E%3Cstop offset='1' stop-color='%23818CF8'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='7' fill='%230A0E15'/%3E%3Cpath d='M7 24 L13 8 L16 17 L19 8 L25 24' fill='none' stroke='url(%23a)' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;900&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&family=Oswald:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<!-- спрайт пиктограмм техники -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="icg" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="48" y2="48">
+      <stop offset="0" stop-color="#2DD4A7"/><stop offset=".5" stop-color="#38BDF8"/><stop offset="1" stop-color="#818CF8"/>
+    </linearGradient>
+    <symbol id="ic-cam" viewBox="0 0 48 48"><rect x="5" y="14" width="27" height="20" rx="3"/><circle cx="18" cy="24" r="6"/><circle cx="18" cy="24" r="2.2"/><path d="M32 20l11-5v18l-11-5"/><rect x="9" y="9" width="11" height="5" rx="1.5"/></symbol>
+    <symbol id="ic-lens" viewBox="0 0 48 48"><circle cx="24" cy="24" r="16"/><circle cx="24" cy="24" r="10"/><circle cx="24" cy="24" r="3.5"/><path d="M31.5 14.5a11 11 0 0 1 3.6 4.2"/></symbol>
+    <symbol id="ic-adapter" viewBox="0 0 48 48"><circle cx="24" cy="24" r="15"/><circle cx="24" cy="24" r="9"/><path d="M24 9v5M39 24h-5M24 39v-5M9 24h5"/></symbol>
+    <symbol id="ic-card" viewBox="0 0 48 48"><path d="M19 8h13a3 3 0 0 1 3 3v26a3 3 0 0 1-3 3H16a3 3 0 0 1-3-3V14z"/><path d="M20 14v6M25 14v6M30 14v6"/></symbol>
+    <symbol id="ic-light" viewBox="0 0 48 48"><rect x="8" y="10" width="21" height="25" rx="3"/><circle cx="18.5" cy="22.5" r="6.5"/><path d="M33 15l8-4M33 22.5h9M33 30l8 4"/></symbol>
+    <symbol id="ic-grip" viewBox="0 0 48 48"><path d="M24 8v28"/><path d="M24 36l-11 7M24 36l11 7M24 36v7"/><path d="M24 13h13"/><circle cx="39" cy="13" r="2.2"/><circle cx="24" cy="20" r="2.6"/></symbol>
+    <symbol id="ic-rig" viewBox="0 0 48 48"><rect x="8" y="17" width="30" height="19" rx="4"/><circle cx="15" cy="26.5" r="2"/><circle cx="23" cy="26.5" r="2"/><circle cx="31" cy="26.5" r="2"/><path d="M15 17v-4a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v4"/></symbol>
+    <symbol id="ic-gimbal" viewBox="0 0 48 48"><circle cx="24" cy="19" r="11"/><rect x="20" y="15" width="8" height="8" rx="1.5"/><path d="M24 30v10M17 42h14"/></symbol>
+    <symbol id="ic-monitor" viewBox="0 0 48 48"><rect x="7" y="12" width="34" height="23" rx="3"/><path d="M16 12V7M32 12V7"/><path d="M20.5 19l9 4.7-9 4.7z"/></symbol>
+    <symbol id="ic-filter" viewBox="0 0 48 48"><rect x="12" y="9" width="24" height="30" rx="2.5"/><path d="M12 33L36 15"/><path d="M17 39l-3 0M34 9l2 0"/></symbol>
+    <symbol id="ic-sound" viewBox="0 0 48 48"><rect x="19" y="7" width="10" height="19" rx="5"/><path d="M13 21a11 11 0 0 0 22 0"/><path d="M24 32v7M18 41h12"/></symbol>
+    <symbol id="ic-power" viewBox="0 0 48 48"><rect x="8" y="16" width="28" height="17" rx="3"/><path d="M36 21h5v7h-5"/><path d="M23 19l-5 6.5h7l-5 6.5"/></symbol>
+    <symbol id="ic-comm" viewBox="0 0 48 48"><rect x="11" y="11" width="26" height="17" rx="2.5"/><path d="M6 35h36l-4.5-7H10.5z"/></symbol>
+    <symbol id="ic-misc" viewBox="0 0 48 48"><circle cx="22" cy="22" r="14"/><path d="M22 8a14 14 0 0 0 0 28"/><path d="M32.5 32.5L41 41"/></symbol>
+  </defs>
+</svg>
+
+<header>
+  <div class="wrap nav">
+    <a class="brand" href="index.html" aria-label="СЕВЕРСВЕТ и MONOLITH7 — на главную">
+      <span class="sv">СЕВЕРСВЕТ</span><span class="x">×</span><span class="m7">MONOLITH7</span>
+    </a>
+    <nav class="nav-links" id="nav-links">
+      <a href="index.html">Главная</a>
+      <a href="tech.html" class="here">Аренда техники</a>
+      <a href="team.html">Команда</a>
+      <a href="index.html#contacts">Контакты</a>
+    </nav>
+    <button class="burger" id="burger" aria-label="Меню">☰</button>
+    <button class="cart-btn" onclick="location.href='#request'">
+      <span class="cart-word">Заявка</span> <span class="cart-count" id="cart-count">0</span>
+    </button>
+  </div>
+  <div class="aurora-line"></div>
+</header>
+
+<main>
+
+<section class="page-hero">
+  <div class="wrap">
+    <div class="sec-tag">// Рентал · 2026</div>
+    <h1>Аренда съёмочной техники</h1>
+    <p class="lede">126 позиций в 14 ветках: камеры, кинооптика, свет, звук, грип, стабилизация и эфирный тракт.
+    Каждая позиция — с пояснением, зачем она на площадке. Отмечайте нужное кнопкой «В заявку» —
+    внизу страницы соберётся список для расчёта.</p>
+  </div>
+</section>
+
+<!-- КАТАЛОГ -->
+<section id="catalog" style="padding-top:0">
+  <div class="cat-toolbar">
+    <div class="wrap">
+      <nav class="cat-nav" id="cat-nav" aria-label="Разделы каталога"></nav>
+    </div>
+  </div>
+  <div class="wrap" id="catalog-root"></div>
+</section>
+
+<!-- КОМПЛЕКТЫ -->
+<section id="kits" style="background:var(--night-2);border-top:1px solid var(--hairline);border-bottom:1px solid var(--hairline)">
+  <div class="wrap">
+    <div class="sec-tag">// Готовые сборки</div>
+    <h2 class="sec-title">Комплекты под съёмку</h2>
+    <p class="sec-sub">Если не хочется собирать по позициям — назовите задачу, соберём комплект.
+    Вот типовые сборки для старта разговора.</p>
+    <div class="kits">
+      <div class="kit" style="background:var(--night)">
+        <div class="k-tag">Интервью · Подкаст</div>
+        <h3>Разговорный жанр</h3>
+        <ul>
+          <li>Две камеры: Nikon ZR + Z6III, светосильные зумы</li>
+          <li>Подкаст-станция Zoom P4 + радиопетлички</li>
+          <li>Мягкий ключ F200Bi + RGB-акценты TL60</li>
+          <li>Контрольный монитор, стойки, питание</li>
+        </ul>
+        <div class="k-note">Свет ставится за 40 минут, звук — сразу на 2–6 голосов.</div>
+      </div>
+      <div class="kit" style="background:var(--night)">
+        <div class="k-tag">Клип · Кино</div>
+        <h3>Постановочная съёмка</h3>
+        <ul>
+          <li>Nikon ZR в риге + анаморфоты Blazar Remus 1.5x</li>
+          <li>Кинопраймы 7Artisans 14/35/85 + фильтры</li>
+          <li>DJI RS4 Pro / Glidecam + фоллоу-фокус Nucleus-N</li>
+          <li>Полный свет + грип + режиссёрский монитор</li>
+        </ul>
+        <div class="k-note">Режиссёр видит кадр на большом мониторе прямо во время мотора.</div>
+      </div>
+      <div class="kit" style="background:var(--night)">
+        <div class="k-tag">Репортаж · Ивент</div>
+        <h3>Живая съёмка</h3>
+        <ul>
+          <li>Лёгкий сетап: камера + зум + гироскоп</li>
+          <li>Пушка Shure + ручной радиомикрофон</li>
+          <li>Беспроводной видеосендер MARS 300 Pro</li>
+          <li>Рации, батарейный парк на весь день</li>
+        </ul>
+        <div class="k-note">Мобильная единица без проводов — успевает за событием.</div>
+      </div>
+      <div class="kit" style="background:var(--night)">
+        <div class="k-tag">Live · Трансляция</div>
+        <h3>Прямой эфир</h3>
+        <ul>
+          <li>4 камеры + ATEM Mini Pro ISO с записью каждой</li>
+          <li>Беспроводной мультикам Shimbol TP Mini ×3</li>
+          <li>Интерком на 5 абонентов, headset-гарнитуры ×9</li>
+          <li>Инвертор 2 кВт — эфир без розетки</li>
+        </ul>
+        <div class="k-note">После эфира мультикам пересобирается на посте — ISO-запись всех камер.</div>
+      </div>
+      <div class="kit" style="background:var(--night)">
+        <div class="k-tag">Студия · Хромакей</div>
+        <h3>Павильонная съёмка</h3>
+        <ul>
+          <li>Хромакей 2.6×3 м + чёрный фон</li>
+          <li>C-стенды, флаги, отражатели 150×100</li>
+          <li>Ровный свет S60BI ×3 + панели F200Bi</li>
+          <li>Скрытые гарнитуры для ведущих</li>
+        </ul>
+        <div class="k-note">Разворачивается в любом помещении от 20 м².</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- УСЛОВИЯ -->
+<section id="terms">
+  <div class="wrap">
+    <div class="sec-tag">// Логистика и условия</div>
+    <h2 class="sec-title">Как устроена аренда</h2>
+    <div class="terms">
+      <div class="term">
+        <h3>Быстрая подача</h3>
+        <p>База — Москва и Московская область. Вся техника перевозится на личном автомобиле —
+        это сокращает время подачи и исключает расходы на трансфер. Готовы к командировкам:
+        приедем со своей техникой в любой, даже самый дальний город России.</p>
+      </div>
+      <div class="term">
+        <h3>Гибкие условия</h3>
+        <p>Для проектов с ограниченным бюджетом предусмотрены персональные условия аренды.
+        Скажите честно, сколько есть, — соберём максимум под эту цифру.</p>
+      </div>
+      <div class="term">
+        <h3>Целиком или поэлементно</h3>
+        <p>Полный парк выдаётся единым комплектом под проект — или поэлементно,
+        от одного объектива до пары стоек. Оформление по договору, техника проверяется при выдаче и возврате.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ЗАЯВКА -->
+<section id="request" style="background:var(--night-2);border-top:1px solid var(--hairline)">
+  <div class="wrap">
+    <div class="sec-tag">// Заявка</div>
+    <h2 class="sec-title">Собрать заявку</h2>
+    <p class="sec-sub">Форма соберёт текст заявки вместе с выбранной техникой.
+    Останется отправить его нам в Telegram одной кнопкой.</p>
+    <div class="req-box">
+      <div class="req-form" style="background:var(--night)">
+        <label for="f-name">Как вас зовут *</label>
+        <input id="f-name" type="text" autocomplete="name" placeholder="Имя">
+        <label for="f-contact">Телефон или Telegram *</label>
+        <input id="f-contact" type="text" autocomplete="tel" placeholder="+7 ··· ··· ·· ·· или @username">
+        <div class="row2">
+          <div>
+            <label for="f-dates">Даты съёмки / аренды</label>
+            <input id="f-dates" type="text" placeholder="например, 12–14 сентября">
+          </div>
+          <div>
+            <label for="f-type">Что за задача</label>
+            <select id="f-type">
+              <option>Аренда техники</option>
+              <option>Клип</option>
+              <option>Реклама / имиджевый ролик</option>
+              <option>Интервью / подкаст</option>
+              <option>Репортаж / ивент</option>
+              <option>Кино / сериал / документалистика</option>
+              <option>Трансляция / live</option>
+              <option>Вертикальный контент</option>
+              <option>Другое</option>
+            </select>
+          </div>
+        </div>
+        <label for="f-need">Что нужно</label>
+        <select id="f-need">
+          <option>Только техника</option>
+          <option>Техника + операторская группа</option>
+          <option>Продакшен под ключ (техника + команда + пост)</option>
+        </select>
+        <label for="f-msg">Пара слов о проекте</label>
+        <textarea id="f-msg" placeholder="Локация, хронометраж, референсы — что угодно, что поможет понять задачу"></textarea>
+        <button class="btn btn-primary" id="build-req">Собрать заявку</button>
+        <div class="req-out" id="req-out">
+          <label for="req-text" style="margin-top:22px">Текст заявки — скопирован автоматически</label>
+          <textarea id="req-text" readonly></textarea>
+          <div class="out-btns">
+            <button class="btn btn-ghost" id="copy-req">Скопировать ещё раз</button>
+            <a class="btn btn-primary" href="https://t.me/Manzhet" target="_blank" rel="noopener">Отправить Артёму →</a>
+            <a class="btn btn-primary" href="https://t.me/sbphotoshoter" target="_blank" rel="noopener">Отправить Савелию →</a>
+          </div>
+        </div>
+      </div>
+      <div class="req-cart" style="background:var(--night)">
+        <h3>Техника в заявке</h3>
+        <div class="rc-sub">Добавляйте позиции из каталога кнопкой «В заявку»</div>
+        <ul id="cart-list"></ul>
+        <div id="cart-empty">Пока пусто. Отметьте нужное в <a href="#catalog" style="color:var(--aurora-c)">каталоге</a> — или просто опишите задачу словами, подберём сами.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <hr class="aurora-line" style="margin-bottom:36px;opacity:.5">
+  <div class="wrap">
+    <div class="fine"><b>СЕВЕРСВЕТ</b> — техническое обеспечение съёмок · <b>MONOLITH7</b> — продакшен полного цикла</div>
+    <div class="right">Москва и МО · выезд по всей России · 2026</div>
+  </div>
+</footer>
+
+<div class="toast" id="toast"></div>
+<script src="assets/catalog.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>
