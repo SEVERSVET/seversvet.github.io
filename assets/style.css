@@ -212,13 +212,16 @@ section{padding:88px 0}
   transition:border-color .18s,background .18s;
 }
 .item:hover{border-color:rgba(45,212,167,.4);background:var(--night-3)}
-.i-pic{height:76px;display:flex;align-items:center;justify-content:center;position:relative;margin-bottom:2px}
-.i-pic::before{content:"";position:absolute;width:130px;height:56px;border-radius:50%;
-  background:radial-gradient(50% 50% at 50% 50%,rgba(56,189,248,.13),transparent 72%)}
-.i-pic svg{width:52px;height:52px;position:relative;fill:none;stroke:url(#icg);stroke-width:2;
-  stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 6px 10px rgba(0,0,0,.45));
-  transition:transform .25s cubic-bezier(.23,1,.32,1)}
-.item:hover .i-pic svg{transform:scale(1.1) translateY(-2px)}
+/* витрина позиции: предмет стоит на «полке» — мягкое сияние сверху, тень-опора снизу */
+.i-pic{height:96px;display:flex;align-items:center;justify-content:center;position:relative;margin-bottom:4px}
+.i-pic::before{content:"";position:absolute;inset:0;
+  background:radial-gradient(58% 62% at 50% 42%,rgba(56,189,248,.14),transparent 72%)}
+.i-pic::after{content:"";position:absolute;bottom:6px;width:88px;height:9px;border-radius:50%;
+  background:radial-gradient(50% 50% at 50% 50%,rgba(2,4,8,.75),transparent 72%)}
+.i-pic svg,.i-pic img{position:relative;width:124px;height:93px;object-fit:contain;
+  filter:drop-shadow(0 10px 14px rgba(0,0,0,.55));
+  transition:transform .28s cubic-bezier(.23,1,.32,1)}
+.item:hover .i-pic svg,.item:hover .i-pic img{transform:scale(1.07) translateY(-3px)}
 .item .i-top{display:flex;align-items:flex-start;gap:10px}
 .item h4{font-size:14px;font-weight:700;line-height:1.3;flex:1}
 .item .qty{font-family:var(--font-m);font-size:11.5px;color:var(--aurora-g);background:rgba(45,212,167,.09);

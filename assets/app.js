@@ -47,7 +47,93 @@ function syncButtons() {
 }
 
 /* ── каталог (только на странице техники) ── */
-const CAT_ICONS = ['cam','lens','adapter','card','light','grip','rig','gimbal','monitor','filter','sound','power','comm','misc'];
+/* предметная иллюстрация позиции: правила читаются сверху вниз, первое совпадение выигрывает.
+   Именно поэтому «Картридер CFexpress» стоит выше «CFexpress», а «Плата питания для Ronin» — выше гимбала. */
+const GEAR_RULES = [
+  [/анаморф|anamorphic/i, 'lens-anam'],
+  [/кино-сет|spectrum|dulens|apo cf prime/i, 'lens-set'],
+  [/70-200/i, 'lens-tele'],
+  [/24-70|35-150/i, 'lens-zoom'],
+  [/samyang|14mm/i, 'lens-wide'],
+  [/50mm f\/1\.4/i, 'lens-prime'],
+  [/адаптер (viltrox|pl|nikon ftz)|pl[–-]e/i, 'adapter'],
+  [/картридер/i, 'reader'],
+  [/cfexpress|карты памяти/i, 'card-cfe'],
+  [/sd-карта/i, 'card-sd'],
+  [/f200bi/i, 'light-flex'],
+  [/tl60|tube/i, 'light-tube'],
+  [/s60bi|focusing/i, 'light-fresnel'],
+  [/extension/i, 'extension'],
+  [/c-stand/i, 'cstand'],
+  [/miniboom|бумом/i, 'boom'],
+  [/grip head/i, 'griphead'],
+  [/струбцин|mathellini/i, 'clamp'],
+  [/super clamp/i, 'superclamp'],
+  [/magic arm/i, 'magicarm'],
+  [/sandbag|мешок/i, 'sandbag'],
+  [/combo steel|стойк/i, 'stand'],
+  [/переходник|адаптер neewer/i, 'screw'],
+  [/род smallrig|15-мм родов/i, 'rod'],
+  [/площадка smallrig dbc/i, 'baseplate'],
+  [/плечев/i, 'shoulder'],
+  [/крепление v-mount|v-lock/i, 'vplate'],
+  [/увеличитель высоты/i, 'riser'],
+  [/nato/i, 'nato'],
+  [/lws|поддержка объектива/i, 'lenssupport'],
+  [/штативная головка/i, 'tripodhead'],
+  [/быстросъёмная площадка|501pl/i, 'qrplate'],
+  [/cineback/i, 'cage'],
+  [/tilta ring|кольцо/i, 'ring'],
+  [/d-tap|плата питания/i, 'dtap'],
+  [/rs4|гимбал|ronin/i, 'gimbal'],
+  [/glidecam|стедикам/i, 'steadicam'],
+  [/жилет|vest/i, 'vest'],
+  [/гироскоп/i, 'gyro'],
+  [/ninja v/i, 'recorder'],
+  [/atem|atomx cast/i, 'switcher'],
+  [/atomx|exh-8/i, 'module'],
+  [/shimbol|mars 300|видеосендер/i, 'wireless'],
+  [/playback-монитор|32"/i, 'monitor-big'],
+  [/feelworld|lut/i, 'monitor'],
+  [/nucleus/i, 'ffmotor'],
+  [/follow focus|фоллоу-фокус/i, 'followfocus'],
+  [/компендиум|matte box/i, 'mattebox'],
+  [/4×5\.65|поляризатор/i, 'filter-sq'],
+  [/фильтр/i, 'filter-round'],
+  [/zoom h8/i, 'rec-audio'],
+  [/zoom p4|подкаст/i, 'mixer-audio'],
+  [/пушка|sm89|vm40/i, 'mic-shotgun'],
+  [/ручной радиомикрофон|wh-m1/i, 'mic-hand'],
+  [/петличк|movelink|boomx|lark|tx3|радиосистема/i, 'mic-lav'],
+  [/телесного|скрыт/i, 'earpiece'],
+  [/гарнитур|headset|интерком/i, 'headset'],
+  [/кабель.*xlr|xlr.*кабель|2×xlr/i, 'cable-xlr'],
+  [/аккумуляторы для sony|np-fz/i, 'batt-cam'],
+  [/зарядная станция|swit/i, 'charger-4'],
+  [/зарядное/i, 'charger'],
+  [/np-f/i, 'batt-np'],
+  [/v-mount smallrig vb/i, 'batt-v'],
+  [/инвертор/i, 'inverter'],
+  [/удлинитель/i, 'powerstrip'],
+  [/катушка/i, 'reel'],
+  [/рация|quansheng/i, 'radio'],
+  [/macbook/i, 'laptop'],
+  [/карта захвата|ezcap/i, 'capture'],
+  [/color panel|davinci/i, 'colorpanel'],
+  [/ssd/i, 'ssd'],
+  [/hdd/i, 'hdd'],
+  [/отражатель|рассеиватель/i, 'reflector'],
+  [/хромакей|зелёная/i, 'chroma'],
+  [/ткань|фон/i, 'backdrop'],
+  [/штатив/i, 'tripod'],
+  [/присоск/i, 'suction'],
+  [/nikon zr/i, 'cam-cine'],
+  [/fx3/i, 'cam-box'],
+  [/z6iii/i, 'cam-hybrid'],
+];
+/* если правило не сработало — предмет по ветке каталога */
+const CAT_FALLBACK = ['cam-cine','lens-prime','adapter','card-cfe','light-flex','stand','rod','gimbal','monitor','filter-sq','mic-lav','batt-v','ssd','misc'];
+const gearOf = (name, gi) => (GEAR_RULES.find(r => r[0].test(name)) || [])[1] || CAT_FALLBACK[gi] || 'misc';
 /* короткие имена для чипов якорной навигации — полные остаются в заголовках веток */
 const CAT_SHORT = {
   'Адаптеры и переходники оптики': 'Адаптеры',
@@ -64,6 +150,8 @@ const CAT_SHORT = {
   'Специальное оборудование и аксессуары': 'Спецоборудование',
 };
 const catalogRoot = document.getElementById('catalog-root');
+
+if (catalogRoot && typeof GEAR_SPRITE !== 'undefined') document.body.insertAdjacentHTML('afterbegin', GEAR_SPRITE);
 
 if (catalogRoot && typeof CATALOG !== 'undefined') {
   const catNav = document.getElementById('cat-nav');
@@ -95,7 +183,9 @@ if (catalogRoot && typeof CATALOG !== 'undefined') {
       const card = document.createElement('div');
       card.className = 'item'; card.dataset.id = id;
       card.innerHTML = `
-        <div class="i-pic" aria-hidden="true"><svg><use href="#ic-${CAT_ICONS[gi] || 'misc'}"/></svg></div>
+        <div class="i-pic" aria-hidden="true">${it.img
+          ? `<img src="assets/gear/${it.img}" alt="" loading="lazy">`
+          : `<svg viewBox="0 0 64 48"><use href="#g-${gearOf(it.n, gi)}"/></svg>`}</div>
         <div class="i-top"><h4>${it.n}</h4><span class="qty">${it.q}</span></div>
         <p>${it.d}</p>
         <div class="i-foot">
