@@ -483,7 +483,7 @@ footer .right{margin-left:auto;font-family:var(--font-m);font-size:12px;color:va
 .page-hero h1{font-family:var(--font-h);font-weight:600;font-size:clamp(38px,5.6vw,64px);line-height:1;letter-spacing:.02em;text-transform:uppercase}
 .page-hero p.lede{max-width:640px;margin-top:14px;color:var(--steel);font-size:16.5px;text-wrap:pretty}
 /* первый экран рентала: слева обещание, справа условия — иначе правая половина пустует */
-.hero-tech{display:grid;grid-template-columns:1.15fr .85fr;gap:44px;align-items:start}
+.hero-split{display:grid;grid-template-columns:1.15fr .85fr;gap:44px;align-items:start}
 .terms-card{background:var(--night-2);border:1px solid var(--hairline);border-radius:var(--r-l);
   padding:24px 26px 22px;margin-top:38px}
 .terms-card .tc-tag{font-family:var(--font-m);font-size:11.5px;letter-spacing:.1em;
@@ -500,7 +500,7 @@ footer .right{margin-left:auto;font-family:var(--font-m);font-size:12px;color:va
 .tc-link:hover{opacity:.72}
 /* правило стоит здесь, а не в общем блоке адаптива: тот идёт выше по файлу и проигрывает по порядку */
 @media (max-width:920px){
-  .hero-tech{grid-template-columns:1fr;gap:0}
+  .hero-split{grid-template-columns:1fr;gap:0}
   .terms-card{margin-top:28px}
 }
 .nav-links a.here{color:var(--snow);background:var(--night-3)}

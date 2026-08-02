@@ -282,6 +282,14 @@ if (catalogRoot && typeof CATALOG !== 'undefined') {
   syncButtons();
 }
 
+/* ── цифры портфолио в шапке «Работ»: считаем по данным, чтобы не разошлись с галереями ── */
+const statFilms = document.getElementById('stat-films');
+if (statFilms && typeof FILMS !== 'undefined') {
+  statFilms.textContent = FILMS.length;
+  document.getElementById('stat-shots').textContent = SHOTS.length;
+  document.getElementById('stat-genres').textContent = FILM_GROUPS.length;
+}
+
 /* ── статы на главной (без каталога на странице) ── */
 if (!catalogRoot && typeof CATALOG !== 'undefined') {
   const statItems = document.getElementById('stat-items');
