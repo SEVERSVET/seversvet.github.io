@@ -242,6 +242,14 @@ section{padding:88px 0}
 .term{background:var(--night-2);border:1px solid var(--hairline);border-radius:var(--r-l);padding:30px}
 .term h3{font-size:17px;font-weight:800;margin-bottom:10px}
 .term p{color:var(--steel);font-size:14.5px;text-wrap:pretty}
+.term .ship{list-style:none;margin:0 0 12px}
+.term .ship li{display:flex;flex-wrap:wrap;gap:2px 12px;align-items:baseline;
+  padding:9px 0;border-bottom:1px solid var(--hairline)}
+.term .ship li:last-child{border-bottom:none}
+.term .ship b{font-size:14.5px;font-weight:700;min-width:170px}
+.term .ship span{font-family:var(--font-m);font-size:12.5px;color:var(--aurora-g);margin-left:auto;text-align:right}
+.term .term-note{font-size:13px;color:var(--steel-dim)}
+@media (max-width:520px){.term .ship span{margin-left:0;text-align:left}}
 
 /* ── команда ── */
 .crew{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:22px;margin-top:46px}
@@ -348,9 +356,14 @@ footer .right{margin-left:auto;font-family:var(--font-m);font-size:12px;color:va
 .page-hero p.lede{max-width:640px;margin-top:14px;color:var(--steel);font-size:16.5px;text-wrap:pretty}
 .nav-links a.here{color:var(--snow);background:var(--night-3)}
 
-/* якорная навигация по категориям */
-.cat-nav{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+/* якорная навигация по категориям: на широком экране переносится, на узком — прокручивается */
+.cat-nav{display:flex;flex-wrap:wrap;gap:8px;padding-bottom:2px}
 .cat-nav::-webkit-scrollbar{display:none}
+@media (max-width:820px){
+  .cat-nav{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;
+    -webkit-mask-image:linear-gradient(90deg,#000 90%,transparent);
+    mask-image:linear-gradient(90deg,#000 90%,transparent)}
+}
 .cat-nav a{
   flex-shrink:0;display:inline-flex;align-items:baseline;gap:7px;white-space:nowrap;
   font-size:13px;font-weight:600;color:var(--steel);

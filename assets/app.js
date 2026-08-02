@@ -38,6 +38,21 @@ function syncButtons() {
 
 /* ── каталог (только на странице техники) ── */
 const CAT_ICONS = ['cam','lens','adapter','card','light','grip','rig','gimbal','monitor','filter','sound','power','comm','misc'];
+/* короткие имена для чипов якорной навигации — полные остаются в заголовках веток */
+const CAT_SHORT = {
+  'Адаптеры и переходники оптики': 'Адаптеры',
+  'Носители и картридеры': 'Носители',
+  'Световое оборудование': 'Свет',
+  'Грип, стойки, крепёж': 'Грип и стойки',
+  'Риг (15-мм система)': 'Риг',
+  'Стабилизация и операторская оснастка': 'Стабилизация',
+  'Мониторы, рекордеры, видеоассистенты': 'Мониторы и эфир',
+  'Фокусировка, компендиум, фильтры': 'Фокус и фильтры',
+  'Звуковое оборудование': 'Звук',
+  'Электропитание и батареи': 'Питание',
+  'Связь, DIT-станция, хранение данных': 'Связь и DIT',
+  'Специальное оборудование и аксессуары': 'Спецоборудование',
+};
 const catalogRoot = document.getElementById('catalog-root');
 
 if (catalogRoot && typeof CATALOG !== 'undefined') {
@@ -49,7 +64,8 @@ if (catalogRoot && typeof CATALOG !== 'undefined') {
     if (catNav) {
       const a = document.createElement('a');
       a.href = '#cat-' + idx;
-      a.innerHTML = `<span class="n">${idx}</span>${group.cat}`;
+      a.innerHTML = `<span class="n">${idx}</span>${CAT_SHORT[group.cat] || group.cat}`;
+      a.title = group.cat;
       catNav.appendChild(a);
     }
     const g = document.createElement('div');
