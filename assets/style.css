@@ -448,6 +448,11 @@ footer .right{margin-left:auto;font-family:var(--font-m);font-size:12px;color:va
 /* ── многостраничник ── */
 .page-hero{position:relative;padding:130px 0 44px;overflow:hidden}
 .page-hero .wrap{position:relative}
+.crumbs{display:flex;align-items:center;gap:9px;margin-bottom:16px;
+  font-family:var(--font-m);font-size:12px;letter-spacing:.06em;color:var(--steel-dim)}
+.crumbs a{color:var(--steel);transition:color .15s}
+.crumbs a:hover{color:var(--aurora-c)}
+.crumbs b{font-weight:400;color:var(--steel-dim)}
 .page-hero .sec-tag{margin-bottom:10px}
 .page-hero h1{font-family:var(--font-h);font-weight:600;font-size:clamp(38px,5.6vw,64px);line-height:1;letter-spacing:.02em;text-transform:uppercase}
 .page-hero p.lede{max-width:640px;margin-top:14px;color:var(--steel);font-size:16.5px;text-wrap:pretty}
