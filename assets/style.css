@@ -215,6 +215,18 @@ section{padding:88px 0}
 #catalog{padding-top:64px}
 .cat-toolbar{position:sticky;top:64px;z-index:50;background:rgba(10,14,21,.9);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
   padding:16px 0;border-bottom:1px solid var(--hairline);margin-top:34px}
+/* поиск по парку: 127 позиций листать долго, проще набрать «петличка» */
+.cat-find{display:flex;align-items:center;gap:14px;margin-top:12px}
+.cat-find input{flex:1;min-width:0;background:#080C12;border:1px solid var(--hairline-strong);
+  border-radius:var(--r-s);color:var(--snow);font-family:var(--font-b);font-size:14px;
+  padding:11px 14px;min-height:44px;transition:border-color .15s}
+.cat-find input::placeholder{color:var(--steel-dim)}
+.cat-find input:focus{outline:none;border-color:var(--aurora-c)}
+.cat-find .cf-count{font-family:var(--font-m);font-size:12px;color:var(--steel-dim);white-space:nowrap}
+.item[hidden],.cat-group[hidden]{display:none}
+/* высоту липкой панели считает app.js — под ней и прячутся заголовки веток */
+.cat-group{scroll-margin-top:var(--cat-anchor,180px)}
+@media (max-width:560px){.cat-find .cf-count{display:none}}
 .chips{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
 .chips::-webkit-scrollbar{display:none}
 .chip{
@@ -397,6 +409,16 @@ section{padding:88px 0}
 .req-out .out-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
 .req-out .out-btns .btn{justify-content:center;padding:13px 16px;font-size:14px;white-space:nowrap}
 .req-out .out-btns .wide{grid-column:1/-1}
+/* «наверх» — появляется после первого экрана, тост внизу по центру её не задевает */
+.to-top{
+  position:fixed;right:22px;bottom:22px;z-index:120;width:44px;height:44px;border-radius:50%;
+  background:var(--night-3);border:1px solid var(--hairline-strong);color:var(--snow);
+  font-size:17px;line-height:1;cursor:pointer;opacity:0;transform:translateY(10px);pointer-events:none;
+  transition:opacity .2s,transform .2s cubic-bezier(.23,1,.32,1),border-color .15s;
+}
+.to-top.show{opacity:1;transform:none;pointer-events:auto}
+.to-top:hover{border-color:var(--aurora-c)}
+.to-top:active{transform:scale(.94)}
 .toast{
   position:fixed;bottom:28px;left:50%;transform:translate(-50%,20px);opacity:0;z-index:200;
   background:var(--night-4);border:1px solid rgba(45,212,167,.4);color:var(--snow);

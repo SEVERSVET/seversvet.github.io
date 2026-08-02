@@ -271,6 +271,43 @@ if (catalogRoot && typeof CATALOG !== 'undefined') {
   const statCats = document.getElementById('stat-cats');
   if (statCats) statCats.textContent = CATALOG.length;
 
+  /* якоря веток обязаны выныривать из-под липкой панели, а она растёт от чипов и поля поиска.
+     Отступ вешаем на сами ветки, чтобы не сдвигать остальные якоря страницы */
+  const bar = document.querySelector('.cat-toolbar');
+  if (bar) {
+    const setPad = () => document.documentElement.style
+      .setProperty('--cat-anchor', bar.offsetHeight + 'px');
+    setPad();
+    addEventListener('resize', setPad);
+  }
+
+  /* поиск по каталогу: ищем по названию и описанию, ветки без совпадений прячем целиком */
+  const search = document.getElementById('cat-search');
+  if (search) {
+    const found = document.getElementById('cat-found');
+    const groups = [...catalogRoot.querySelectorAll('.cat-group')];
+    const norm = s => s.toLowerCase().replace(/ё/g, 'е');
+    const filter = () => {
+      const q = norm(search.value.trim());
+      let hits = 0;
+      groups.forEach(g => {
+        let visible = 0;
+        g.querySelectorAll('.item').forEach(card => {
+          const hit = !q || norm(card.textContent).includes(q);
+          card.hidden = !hit;
+          if (hit) visible++;
+        });
+        g.hidden = !visible;
+        /* ветка могла не успеть проявиться по скроллу — при поиске показываем сразу */
+        if (visible && q) g.classList.add('in');
+        hits += visible;
+      });
+      found.textContent = !q ? '' : hits ? `${hits} ${plural(hits, ['позиция', 'позиции', 'позиций'])}` : 'ничего не нашлось';
+    };
+    search.addEventListener('input', filter);
+    search.addEventListener('search', filter);
+  }
+
   document.addEventListener('click', e => {
     const b = e.target.closest('.add'); if (!b) return;
     const id = b.dataset.id, name = b.dataset.name, price = +b.dataset.price || 0;
@@ -559,6 +596,16 @@ if (burger && navLinks) {
   burger.onclick = () => navLinks.classList.toggle('open');
   navLinks.addEventListener('click', e => { if (e.target.tagName === 'A') navLinks.classList.remove('open'); });
 }
+
+/* ── «наверх»: каталог тянется на десятки экранов, руками не долистать ── */
+const toTop = document.createElement('button');
+toTop.type = 'button';
+toTop.className = 'to-top';
+toTop.setAttribute('aria-label', 'Наверх');
+toTop.textContent = '↑';
+toTop.onclick = () => scrollTo({ top: 0, behavior: 'smooth' });
+document.body.appendChild(toTop);
+addEventListener('scroll', () => toTop.classList.toggle('show', scrollY > 1200), { passive: true });
 
 /* ── появление секций ── */
 if (!matchMedia('(prefers-reduced-motion: reduce)').matches && 'IntersectionObserver' in window) {

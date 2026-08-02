@@ -27,7 +27,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;900&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&family=Oswald:wght@500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/style.css?v=10">
+<link rel="stylesheet" href="assets/style.css?v=11">
 </head>
 <body>
 
@@ -87,6 +87,11 @@
   <div class="cat-toolbar">
     <div class="wrap">
       <nav class="cat-nav" id="cat-nav" aria-label="Разделы каталога"></nav>
+      <div class="cat-find">
+        <input id="cat-search" type="search" placeholder="Найти в каталоге: петличка, стойка, ND, V-mount…"
+               aria-label="Поиск по каталогу" autocomplete="off">
+        <span class="cf-count" id="cat-found" role="status"></span>
+      </div>
     </div>
   </div>
   <div class="wrap" id="catalog-root"></div>
@@ -450,8 +455,8 @@
   ]
 }
 </script>
-<script src="assets/catalog.js?v=10"></script>
-<script src="assets/gear.js?v=10"></script>
-<script src="assets/app.js?v=10"></script>
+<script src="assets/catalog.js?v=11"></script>
+<script src="assets/gear.js?v=11"></script>
+<script src="assets/app.js?v=11"></script>
 </body>
 </html>
