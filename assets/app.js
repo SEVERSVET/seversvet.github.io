@@ -13,17 +13,27 @@ function showToast(msg) {
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => toast.classList.remove('show'), 2600);
 }
+const money = n => n.toLocaleString('ru-RU');
+const cartSum = () => cart.reduce((s, c) => s + (c.price || 0), 0);
+
 function saveCart() { localStorage.setItem('sv-cart', JSON.stringify(cart)); renderCartUI(); }
 function renderCartUI() {
   if (cartCount) cartCount.textContent = cart.length;
   const list = document.getElementById('cart-list');
   const empty = document.getElementById('cart-empty');
+  const total = document.getElementById('cart-total');
+  if (total) {
+    const sum = cartSum();
+    total.innerHTML = cart.length
+      ? `Ориентир за смену: <b>${money(sum)} ₽</b><span>от 3 суток −15% · от 7 суток −30%</span>`
+      : '';
+  }
   if (!list) return;
   list.innerHTML = '';
   if (empty) empty.style.display = cart.length ? 'none' : 'block';
   cart.forEach((c, i) => {
     const li = document.createElement('li');
-    li.innerHTML = `<span>${c.name}</span><button class="rm" aria-label="Убрать">✕</button>`;
+    li.innerHTML = `<span>${c.name}</span>${c.price ? `<i class="pr">${money(c.price)} ₽</i>` : ''}<button class="rm" aria-label="Убрать">✕</button>`;
     li.querySelector('.rm').onclick = () => { cart.splice(i, 1); saveCart(); syncButtons(); };
     list.appendChild(li);
   });
@@ -89,8 +99,8 @@ if (catalogRoot && typeof CATALOG !== 'undefined') {
         <div class="i-top"><h4>${it.n}</h4><span class="qty">${it.q}</span></div>
         <p>${it.d}</p>
         <div class="i-foot">
-          <span class="price">цена — по запросу</span>
-          <button class="add" data-id="${id}" data-name="${it.n.replace(/"/g, '&quot;')}" aria-label="Добавить в заявку: ${it.n.replace(/"/g, '&quot;')}">В заявку</button>
+          <span class="price">${it.p ? `от <b>${money(it.p)} ₽</b> / смена` : 'цена — по запросу'}</span>
+          <button class="add" data-id="${id}" data-name="${it.n.replace(/"/g, '&quot;')}" data-price="${it.p || 0}" aria-label="Добавить в заявку: ${it.n.replace(/"/g, '&quot;')}">В заявку</button>
         </div>`;
       grid.appendChild(card);
     });
@@ -104,10 +114,10 @@ if (catalogRoot && typeof CATALOG !== 'undefined') {
 
   document.addEventListener('click', e => {
     const b = e.target.closest('.add'); if (!b) return;
-    const id = b.dataset.id, name = b.dataset.name;
+    const id = b.dataset.id, name = b.dataset.name, price = +b.dataset.price || 0;
     const idx = cart.findIndex(c => c.id === id);
     if (idx >= 0) { cart.splice(idx, 1); showToast('Убрано из заявки'); }
-    else { cart.push({ id, name }); showToast('Добавлено в заявку: ' + name); }
+    else { cart.push({ id, name, price }); showToast('Добавлено в заявку: ' + name); }
     saveCart(); syncButtons();
   });
   syncButtons();
@@ -138,7 +148,9 @@ if (buildBtn) {
     if (msg) text += `\nО проекте: ${msg}`;
     if (cart.length) {
       text += `\n\nТехника (${cart.length} поз.):`;
-      cart.forEach(c => text += `\n— ${c.name}`);
+      cart.forEach(c => text += `\n— ${c.name}${c.price ? ` — ${money(c.price)} ₽/смена` : ''}`);
+      const sum = cartSum();
+      if (sum) text += `\n\nОриентир за смену: ${money(sum)} ₽ (без скидок за срок и доставки)`;
     }
     text += `\n\n(заявка собрана на сайте СЕВЕРСВЕТ × MONOLITH7)`;
     const out = document.getElementById('req-out');
