@@ -3,7 +3,11 @@
    Блок вставляется между маркерами OFFERS:START / OFFERS:END. */
 const fs = require('fs'), vm = require('vm'), path = require('path');
 const ROOT = path.join(__dirname, '..');
-const BASE = 'https://hazzy3525-create.github.io/seversvet/';
+/* адрес берём из canonical, а не из константы: иначе после переезда на домен
+   этот скрипт возвращал в разметку старый github.io */
+const BASE = (fs.readFileSync(path.join(ROOT, 'tech.html'), 'utf8')
+  .match(/<link rel="canonical" href="([^"]+?)tech\.html"/) || [])[1];
+if (!BASE) { console.error('Не нашёл canonical в tech.html — не знаю адрес сайта'); process.exit(1); }
 
 const CATALOG = vm.runInNewContext(
   fs.readFileSync(path.join(ROOT, 'assets/catalog.js'), 'utf8') + '\n;CATALOG');

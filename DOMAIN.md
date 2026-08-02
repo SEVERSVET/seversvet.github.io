@@ -39,11 +39,15 @@ A     @    185.199.111.153
 CNAME www  hazzy3525-create.github.io.
 ```
 
-2. В репозитории сайта:
+2. Дождаться, пока записи разойдутся (10–60 минут), и выполнить **из папки сайта**:
 
 ```bash
-node tools/set-domain.js https://seversvet.pro/ --cname seversvet.pro ; node tools/build-offers.js
+cd C:\src\seversvet\site ; node tools/set-domain.js https://seversvet.pro/ --cname seversvet.pro
 ```
+
+Скрипт сам пересоберёт разметку каталога и проверит DNS: если домен ещё не смотрит на GitHub,
+файл CNAME он не создаст и объяснит, чего не хватает. Это защита — CNAME с ненастроенным доменом
+кладёт сайт по обоим адресам сразу.
 
 3. Запушить, затем в GitHub → Settings → Pages → Custom domain вписать домен и включить **Enforce HTTPS**
    (сертификат выпускается автоматически за 10–60 минут).
