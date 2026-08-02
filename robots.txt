@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://monolithapp.github.io/seversvet/sitemap.xml
+Sitemap: https://seversvet.github.io/sitemap.xml
