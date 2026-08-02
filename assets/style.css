@@ -296,6 +296,12 @@ section{padding:88px 0}
 
 /* ── частые вопросы (нативный details, без JS) ── */
 .faq{margin-top:40px;max-width:860px;border-top:1px solid var(--hairline)}
+/* на широком экране вопросы идут в две колонки — одна узкая колонка оставляла полэкрана пустым */
+@media (min-width:1060px){
+  .faq{max-width:none;display:grid;grid-template-columns:1fr 1fr;column-gap:56px;
+    align-items:start;border-top:none}
+  .faq .qa{border-top:1px solid var(--hairline)}
+}
 .qa{border-bottom:1px solid var(--hairline)}
 .qa summary{list-style:none;cursor:pointer;position:relative;padding:19px 40px 19px 0;
   font-size:15.5px;font-weight:700;transition:color .15s}
@@ -310,7 +316,9 @@ section{padding:88px 0}
 /* ── заявка ── */
 #request{padding-bottom:100px}
 .req-box{display:grid;grid-template-columns:1.1fr .9fr;gap:22px;margin-top:46px}
-.req-form{background:var(--night-2);border:1px solid var(--hairline);border-radius:var(--r-l);padding:36px}
+/* карточка формы живёт по своему контенту: иначе тянется до высоты расчёта и снизу зияет пустота */
+.req-form{background:var(--night-2);border:1px solid var(--hairline);border-radius:var(--r-l);padding:36px;
+  align-self:start}
 .req-form label{display:block;font-size:13px;font-weight:700;color:var(--steel);margin:18px 0 7px}
 .req-form label:first-of-type{margin-top:0}
 .req-form label i{color:var(--aurora-g);font-style:normal}
@@ -355,6 +363,12 @@ section{padding:88px 0}
 .rc-calc .rc-row.solo{grid-template-columns:1fr}
 /* при шестичасовой смене счётчик суток отключён — видно, что поле не работает */
 .rc-calc input:disabled{opacity:.4;cursor:not-allowed}
+/* подача и забор — независимые плечи, каждое со своим тарифом */
+.rc-calc .rc-legs{display:flex;flex-wrap:wrap;gap:9px 18px;margin-top:11px}
+.rc-calc .rc-legs[hidden]{display:none}
+.rc-calc .chk{display:flex;align-items:center;gap:8px;margin:0;font-size:12.5px;font-weight:600;
+  color:var(--steel);cursor:pointer}
+.rc-calc .chk input{width:16px;height:16px;min-height:0;padding:0;accent-color:var(--aurora-c);cursor:pointer}
 .rc-calc label{display:block;font-size:12px;font-weight:700;color:var(--steel-dim);margin-bottom:7px;
   letter-spacing:.02em}
 #cart-total{margin-top:20px}
@@ -368,6 +382,14 @@ section{padding:88px 0}
   -webkit-background-clip:text;background-clip:text;color:transparent}
 #cart-total .t-note{margin-top:12px;font-size:12px;color:var(--steel-dim);line-height:1.5;text-wrap:pretty}
 #cart-empty{color:var(--steel-dim);font-size:14px;padding:18px 0}
+/* пока корзина пуста, карточка объясняет, по каким правилам пойдёт расчёт */
+.rc-hint{list-style:none;margin-top:18px;padding-top:6px;border-top:1px solid var(--hairline)}
+.rc-hint li{display:flex;flex-wrap:wrap;gap:2px 12px;align-items:baseline;padding:8px 0;
+  border-bottom:1px solid var(--hairline)}
+.rc-hint li:last-child{border-bottom:none}
+.rc-hint b{font-size:13px;font-weight:700;color:var(--steel)}
+.rc-hint span{margin-left:auto;font-family:var(--font-m);font-size:11.5px;color:var(--steel-dim);
+  text-align:right}
 #cart-empty[hidden]{display:none}
 .req-out{margin-top:18px;display:none}
 .req-out.show{display:block}
@@ -460,6 +482,27 @@ footer .right{margin-left:auto;font-family:var(--font-m);font-size:12px;color:va
 .page-hero .sec-tag{margin-bottom:10px}
 .page-hero h1{font-family:var(--font-h);font-weight:600;font-size:clamp(38px,5.6vw,64px);line-height:1;letter-spacing:.02em;text-transform:uppercase}
 .page-hero p.lede{max-width:640px;margin-top:14px;color:var(--steel);font-size:16.5px;text-wrap:pretty}
+/* первый экран рентала: слева обещание, справа условия — иначе правая половина пустует */
+.hero-tech{display:grid;grid-template-columns:1.15fr .85fr;gap:44px;align-items:start}
+.terms-card{background:var(--night-2);border:1px solid var(--hairline);border-radius:var(--r-l);
+  padding:24px 26px 22px;margin-top:38px}
+.terms-card .tc-tag{font-family:var(--font-m);font-size:11.5px;letter-spacing:.1em;
+  color:var(--aurora-c);margin-bottom:12px}
+.terms-card ul{list-style:none}
+.terms-card li{display:flex;flex-wrap:wrap;gap:2px 14px;align-items:baseline;padding:9px 0;
+  border-bottom:1px solid var(--hairline)}
+.terms-card li:last-child{border-bottom:none}
+.terms-card b{font-size:14px;font-weight:700;color:var(--snow)}
+.terms-card span{margin-left:auto;font-family:var(--font-m);font-size:12.5px;color:var(--aurora-g);
+  text-align:right;font-variant-numeric:tabular-nums}
+.tc-link{display:inline-block;margin-top:16px;font-size:13px;font-weight:700;color:var(--aurora-c);
+  transition:opacity .15s}
+.tc-link:hover{opacity:.72}
+/* правило стоит здесь, а не в общем блоке адаптива: тот идёт выше по файлу и проигрывает по порядку */
+@media (max-width:920px){
+  .hero-tech{grid-template-columns:1fr;gap:0}
+  .terms-card{margin-top:28px}
+}
 .nav-links a.here{color:var(--snow);background:var(--night-3)}
 
 /* якорная навигация по категориям: на широком экране переносится, на узком — прокручивается */

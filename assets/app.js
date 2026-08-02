@@ -42,10 +42,15 @@ function calcOrder() {
   const full = rate * shifts;
   const rent = Math.round(full * (1 - disc));
   const s = SHIP[order.ship] || SHIP.msk;
-  /* порог считается по аренде за смену — так же, как написано в условиях;
-     на шестичасовой аренде доставка и забор платные всегда */
-  const delivery = s.fee && (half || base < s.free) ? s.fee : 0;
-  return { base, half, rate, shifts, disc, full, rent, delivery, total: rent + delivery, ship: s };
+  /* подача и забор — два разных выезда, каждый по тарифу.
+     Бесплатный порог считается по аренде за сутки и работает только на подачу;
+     забор с площадки платный всегда, на шестичасовой смене платная и подача. */
+  const dropoff = order.dropoff !== false && s.fee ? (half || base < s.free ? s.fee : 0) : 0;
+  const pickupBack = order.pickupBack && s.fee ? s.fee : 0;
+  const delivery = dropoff + pickupBack;
+  return { base, half, rate, shifts, disc, full, rent, dropoff, pickupBack, delivery,
+    legs: { drop: order.dropoff !== false && !!s.fee, back: !!order.pickupBack && !!s.fee },
+    total: rent + delivery, ship: s };
 }
 
 function saveCart() {
@@ -64,7 +69,11 @@ function renderTotals() {
     (t.half ? row('Смена 6 часов — 70%', money(t.rate) + ' ₽', 'off') : '') +
     (t.shifts > 1 ? row(`${t.shifts} ${shiftWord(t.shifts)}`, money(t.full) + ' ₽') : '') +
     (t.disc ? row(`Скидка за срок −${t.disc * 100 | 0}%`, '−' + money(t.full - t.rent) + ' ₽', 'off') : '') +
-    row((t.half ? 'Доставка и забор · ' : 'Доставка · ') + t.ship.n, t.delivery ? money(t.delivery) + ' ₽' : 'бесплатно') +
+    (t.ship.fee
+      ? (t.legs.drop ? row('Подача · ' + t.ship.n, t.dropoff ? money(t.dropoff) + ' ₽' : 'бесплатно') : '') +
+        (t.legs.back ? row('Забор с площадки · ' + t.ship.n, money(t.pickupBack) + ' ₽') : '') +
+        (!t.legs.drop && !t.legs.back ? row('Логистика', 'своими силами') : '')
+      : row('Самовывоз', 'бесплатно')) +
     `<div class="tr sum"><span>Ориентир по заявке</span><b>${money(t.total)} ₽</b></div>` +
     `<p class="t-note">Предварительный расчёт, не оферта: комплектом считаем отдельно и обычно дешевле.
      Залог не берём, техника оформляется договором.</p>`;
@@ -333,10 +342,24 @@ if (buildBtn) {
     }
     saveCart();
   }
+  /* подача и забор — отдельные выезды, отмечаются независимо */
+  const dropEl = $('f-drop'), backEl = $('f-back'), legsBox = $('rc-legs');
+  dropEl.checked = order.dropoff !== false;
+  backEl.checked = !!order.pickupBack;
+  function syncLegs() {
+    order.dropoff = dropEl.checked;
+    order.pickupBack = backEl.checked;
+    legsBox.hidden = shipEl.value === 'pickup';
+    saveCart();
+  }
+  dropEl.addEventListener('change', syncLegs);
+  backEl.addEventListener('change', syncLegs);
+
   shiftsEl.addEventListener('input', () => { order.shifts = clamp(+shiftsEl.value || 1, 1, 60); saveCart(); });
-  shipEl.addEventListener('change', () => { order.ship = shipEl.value; saveCart(); });
+  shipEl.addEventListener('change', () => { order.ship = shipEl.value; syncLegs(); });
   modeEl.addEventListener('change', syncMode);
   syncMode();
+  syncLegs();
   syncShiftsFromDates();
 
   buildBtn.onclick = async () => {
@@ -366,7 +389,12 @@ if (buildBtn) {
       if (t.shifts > 1) text += `\nСуток: ${t.shifts} → ${money(t.full)} ₽`;
       // скидка и доставка ниже — порядок строк повторяет расчёт на сайте
       if (t.disc) text += `\nСкидка за срок −${t.disc * 100 | 0}%: −${money(t.full - t.rent)} ₽`;
-      text += `\n${t.half ? 'Доставка и забор' : 'Доставка'} (${t.ship.n}): ${t.delivery ? money(t.delivery) + ' ₽' : 'бесплатно'}`;
+      if (!t.ship.fee) text += `\nЛогистика: самовывоз`;
+      else {
+        if (t.legs.drop) text += `\nПодача (${t.ship.n}): ${t.dropoff ? money(t.dropoff) + ' ₽' : 'бесплатно'}`;
+        if (t.legs.back) text += `\nЗабор с площадки (${t.ship.n}): ${money(t.pickupBack)} ₽`;
+        if (!t.legs.drop && !t.legs.back) text += `\nЛогистика: своими силами`;
+      }
       text += `\nИТОГО ориентир: ${money(t.total)} ₽`;
     }
     text += `\n\n(заявка собрана на сайте СЕВЕРСВЕТ × MONOLITH7)`;
