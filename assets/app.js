@@ -252,9 +252,7 @@ if (catalogRoot && typeof CATALOG !== 'undefined') {
       const card = document.createElement('div');
       card.className = 'item'; card.dataset.id = id;
       card.innerHTML = `
-        <div class="i-pic" aria-hidden="true">${it.img
-          ? `<img src="assets/gear/${it.img}" alt="" loading="lazy">`
-          : `<svg viewBox="0 0 64 48"><use href="#g-${gearOf(it.n, gi)}"/></svg>`}</div>
+        <div class="i-pic" aria-hidden="true"><svg viewBox="0 0 64 48"><use href="#g-${gearOf(it.n, gi)}"/></svg></div>
         <div class="i-top"><h4>${it.n}</h4><span class="qty">${it.q}</span></div>
         <p>${it.d}</p>
         <div class="i-foot">
