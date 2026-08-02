@@ -139,47 +139,136 @@ if (buildBtn) {
   };
 }
 
-/* ── галерея «Со смен» (главная) ── */
-/* Добавление кадра: положить .webp в assets/bts/ и вписать сюда {src, cap, tall?, wide?} */
-const BTS_SHOTS = [
-  { src: 'cut-01-1', cap: 'Театр и сцена' },
-  { src: 'land-34', cap: 'Продуктовая реклама', wide: true },
-  { src: 'cut-03-1', cap: 'Свадебное кино' },
-  { src: 'tall-01', cap: 'Бекстейдж · риг', tall: true },
-  { src: 'cut-05-2', cap: 'Фуд-съёмка' },
-  { src: 'land-16', cap: 'Нуар-стилизация' },
-  { src: 'cut-06-2', cap: 'Live и концерты' },
-  { src: 'land-01', cap: 'Бекстейдж · хромакей' },
-  { src: 'cut-02-2', cap: 'Клип · кабаре' },
-  { src: 'land-19', cap: 'Историческая постановка' },
-  { src: 'land-42', cap: 'Бекстейдж · кулинарное шоу' },
-  { src: 'cut-08-3', cap: 'Спорт · бокс' },
-  { src: 'tall-03', cap: 'Бекстейдж · камера', tall: true },
-  { src: 'land-14', cap: 'Интервью и подкасты' },
-  { src: 'cut-09-2', cap: 'Городская история' },
-  { src: 'land-22', cap: 'Военная драма' },
-  { src: 'cut-10-1', cap: 'Кино · портрет' },
-  { src: 'land-43', cap: 'Рекламный ролик' },
-  { src: 'land-25', cap: 'Промышленная съёмка' },
-  { src: 'cut-07-1', cap: 'Короткий метр' },
-  { src: 'land-04', cap: 'Документалистика' },
-  { src: 'cut-04-1', cap: 'Техника в деле' },
-  { src: 'land-44', cap: 'Бекстейдж · свет' },
-  { src: 'land-40', cap: 'Кино · сцена', wide: true },
-];
+/* ── кадры портфолио (данные в assets/portfolio.js) ── */
+function shotEl(s) {
+  const d = document.createElement('div');
+  d.className = 'bts-shot' + (s.tall ? ' tall' : '') + (s.wide ? ' wide' : '');
+  d.innerHTML = `<img src="assets/work/${s.id}.webp" alt="${s.cap || 'Кадр со смены'}" loading="lazy"><div class="cap">${s.cap || ''}</div>`;
+  return d;
+}
+
+/* галерея на главной — только избранное (home) */
 const btsGrid = document.getElementById('bts-grid');
-if (btsGrid) {
-  if (!BTS_SHOTS.length) {
+if (btsGrid && typeof SHOTS !== 'undefined') {
+  const picks = SHOTS.filter(s => s.home);
+  if (!picks.length) {
     const sec = document.getElementById('bts-section');
     if (sec) sec.style.display = 'none';
   } else {
-    BTS_SHOTS.forEach(s => {
-      const d = document.createElement('div');
-      d.className = 'bts-shot' + (s.tall ? ' tall' : '') + (s.wide ? ' wide' : '');
-      d.innerHTML = `<img src="assets/bts/${s.src}.webp" alt="${s.cap || 'Кадр со смены'}" loading="lazy"><div class="cap">${s.cap || ''}</div>`;
-      btsGrid.appendChild(d);
+    picks.forEach(s => btsGrid.appendChild(shotEl(s)));
+  }
+}
+
+/* ── страница «Работы» ── */
+const shotsRoot = document.getElementById('shots-root');
+if (shotsRoot && typeof SHOTS !== 'undefined') {
+  SHOT_GROUPS.forEach(g => {
+    const items = SHOTS.filter(s => s.g === g.g);
+    if (!items.length) return;
+    const box = document.createElement('div');
+    box.className = 'cat-group';
+    box.innerHTML = `
+      <div class="cat-head">
+        <span class="idx">${g.n}</span>
+        <h3>${g.t}</h3>
+        <span class="cnt">${items.length} кадр.</span>
+      </div>
+      <p class="cat-desc">${g.d}</p>
+      <div class="bts-grid" style="margin-top:0"></div>`;
+    const grid = box.querySelector('.bts-grid');
+    items.forEach(s => grid.appendChild(shotEl(s)));
+    shotsRoot.appendChild(box);
+  });
+}
+
+/* окно просмотра ролика */
+const player = document.getElementById('player');
+const playerVideo = document.getElementById('player-video');
+function openFilm(id, title) {
+  if (!player) return;
+  document.getElementById('player-title').textContent = title;
+  playerVideo.src = `assets/film/${id}.mp4`;
+  playerVideo.poster = `assets/film/${id}.webp`;
+  player.hidden = false;
+  document.body.style.overflow = 'hidden';
+  playerVideo.play().catch(() => {});
+}
+function closeFilm() {
+  if (!player || player.hidden) return;
+  playerVideo.pause();
+  playerVideo.removeAttribute('src');
+  playerVideo.load();
+  player.hidden = true;
+  document.body.style.overflow = '';
+}
+if (player) {
+  document.getElementById('player-close').onclick = closeFilm;
+  player.addEventListener('click', e => { if (e.target === player) closeFilm(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeFilm(); });
+}
+
+function filmCard(f) {
+  const a = document.createElement('article');
+  a.className = 'film';
+  a.innerHTML = `
+    <button class="film-pic" aria-label="Смотреть: ${f.t}">
+      <img src="assets/film/${f.id}.webp" alt="${f.t}" loading="lazy">
+      <video src="assets/film/${f.id}-loop.mp4" muted loop playsinline preload="none" aria-hidden="true"></video>
+      ${f.len ? `<span class="film-len">${f.len}</span>` : ''}
+      <span class="film-play"><span class="tri">▶</span>Смотреть</span>
+    </button>
+    <div class="film-meta">
+      <div class="f-sub">${f.s}</div>
+      <h3>${f.t}</h3>
+      <p>${f.d}</p>
+    </div>`;
+  const pic = a.querySelector('.film-pic');
+  const loop = a.querySelector('video');
+  pic.onclick = () => openFilm(f.id, f.t);
+  /* немой отрывок — только на устройствах с курсором, чтобы не жечь мобильный трафик */
+  if (matchMedia('(hover:hover)').matches) {
+    pic.addEventListener('mouseenter', () => {
+      pic.classList.add('playing');
+      loop.play().catch(() => {});
+    });
+    pic.addEventListener('mouseleave', () => {
+      pic.classList.remove('playing');
+      loop.pause(); loop.currentTime = 0;
     });
   }
+  return a;
+}
+
+const reelBox = document.getElementById('reel-box');
+if (reelBox && typeof FILMS !== 'undefined') {
+  const reel = FILMS.find(f => f.g === 'reel');
+  if (reel) {
+    reelBox.innerHTML = `<video controls playsinline preload="none"
+      poster="assets/film/${reel.id}.webp" src="assets/film/${reel.id}.mp4"></video>`;
+  } else {
+    reelBox.closest('section').style.display = 'none';
+  }
+}
+
+const filmsRoot = document.getElementById('films-root');
+if (filmsRoot && typeof FILMS !== 'undefined') {
+  FILM_GROUPS.forEach(g => {
+    const items = FILMS.filter(f => f.g === g.g);
+    if (!items.length) return;
+    const box = document.createElement('div');
+    box.className = 'cat-group';
+    box.innerHTML = `
+      <div class="cat-head">
+        <span class="idx">${g.n}</span>
+        <h3>${g.t}</h3>
+        <span class="cnt">${items.length} рол.</span>
+      </div>
+      <p class="cat-desc">${g.d}</p>
+      <div class="film-grid"></div>`;
+    const grid = box.querySelector('.film-grid');
+    items.forEach(f => grid.appendChild(filmCard(f)));
+    filmsRoot.appendChild(box);
+  });
 }
 
 /* ── меню ── */

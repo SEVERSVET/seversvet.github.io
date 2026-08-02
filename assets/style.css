@@ -342,6 +342,7 @@ footer .right{margin-left:auto;font-family:var(--font-m);font-size:12px;color:va
 
 /* ── многостраничник ── */
 .page-hero{position:relative;padding:130px 0 44px;overflow:hidden}
+.page-hero .wrap{position:relative}
 .page-hero .sec-tag{margin-bottom:10px}
 .page-hero h1{font-family:var(--font-h);font-weight:600;font-size:clamp(38px,5.6vw,64px);line-height:1;letter-spacing:.02em;text-transform:uppercase}
 .page-hero p.lede{max-width:640px;margin-top:14px;color:var(--steel);font-size:16.5px;text-wrap:pretty}
@@ -378,11 +379,13 @@ footer .right{margin-left:auto;font-family:var(--font-m);font-size:12px;color:va
 .gate:hover::after{opacity:1}
 
 /* галерея «Со смен» */
-.bts-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;margin-top:46px}
-.bts-shot{position:relative;border-radius:var(--r-m);overflow:hidden;border:1px solid var(--hairline);aspect-ratio:16/9;background:var(--night-3)}
+/* бенто: ровные ряды, крупные кадры занимают 2 колонки / 2 ряда */
+.bts-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
+  grid-auto-rows:clamp(150px,14.5vw,205px);grid-auto-flow:dense;gap:12px;margin-top:46px}
+.bts-shot{position:relative;border-radius:var(--r-m);overflow:hidden;border:1px solid var(--hairline);background:var(--night-3)}
 .bts-shot img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .4s cubic-bezier(.23,1,.32,1)}
 .bts-shot:hover img{transform:scale(1.045)}
-.bts-shot.tall{aspect-ratio:3/4;grid-row:span 2}
+.bts-shot.tall{grid-row:span 2}
 .bts-shot .cap{
   position:absolute;inset:auto 0 0 0;padding:26px 14px 10px;
   background:linear-gradient(180deg,transparent,rgba(6,9,14,.82));
@@ -391,5 +394,48 @@ footer .right{margin-left:auto;font-family:var(--font-m);font-size:12px;color:va
 }
 .bts-shot:hover .cap{opacity:1}
 @media (max-width:920px){.gates{grid-template-columns:1fr}}
-.bts-shot.wide{aspect-ratio:21/9;grid-column:span 2}
-@media (max-width:640px){.bts-shot.wide{grid-column:span 1;aspect-ratio:16/9}}
+.bts-shot.wide{grid-column:span 2}
+@media (max-width:640px){.bts-shot.wide{grid-column:span 1}.bts-grid{grid-auto-rows:180px}}
+
+/* ── страница «Работы» ── */
+/* плеер держим окном: 720p не растягиваем на всю ширину, иначе мыло */
+.reel-box{max-width:960px;margin:46px auto 0;border:1px solid var(--hairline-strong);border-radius:var(--r-l);
+  overflow:hidden;background:#05080D;box-shadow:0 30px 80px rgba(0,0,0,.55)}
+.reel-box video{display:block;width:100%;height:auto;background:#05080D}
+
+.film-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px;margin-top:22px}
+.film{background:var(--night);border:1px solid var(--hairline);border-radius:var(--r-m);overflow:hidden;
+  display:flex;flex-direction:column;transition:border-color .18s,transform .2s cubic-bezier(.23,1,.32,1)}
+.film:hover{border-color:rgba(56,189,248,.4);transform:translateY(-3px)}
+.film-pic{position:relative;display:block;width:100%;padding:0;border:none;background:#05080D;
+  aspect-ratio:16/9;cursor:pointer;overflow:hidden}
+.film-pic img,.film-pic video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.film-pic video{opacity:0;transition:opacity .3s}
+.film-pic.playing video{opacity:1}
+.film-pic::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 55%,rgba(5,8,13,.7))}
+.film-play{position:absolute;left:14px;bottom:12px;z-index:2;display:flex;align-items:center;gap:9px;
+  font-family:var(--font-m);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--snow)}
+.film-play .tri{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;
+  background:var(--aurora);color:var(--night);font-size:11px;padding-left:2px}
+.film-len{position:absolute;right:12px;top:12px;z-index:2;font-family:var(--font-m);font-size:11px;
+  color:var(--snow);background:rgba(5,8,13,.66);border:1px solid var(--hairline);border-radius:6px;padding:3px 7px;
+  font-variant-numeric:tabular-nums}
+.film-meta{padding:16px 18px 18px}
+.film-meta h3{font-size:16px;font-weight:800;line-height:1.25;margin-bottom:5px}
+.film-meta .f-sub{font-family:var(--font-m);font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--aurora-g);margin-bottom:8px}
+.film-meta p{font-size:13.5px;color:var(--steel);text-wrap:pretty}
+
+/* окно просмотра */
+.player{position:fixed;inset:0;z-index:300;display:grid;place-items:center;padding:24px;
+  background:rgba(4,6,10,.86);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.player[hidden]{display:none}
+.player-win{width:min(960px,94vw);background:var(--night-2);border:1px solid var(--hairline-strong);
+  border-radius:var(--r-l);overflow:hidden;box-shadow:0 40px 100px rgba(0,0,0,.7)}
+.player-bar{display:flex;align-items:center;gap:14px;padding:12px 14px;border-bottom:1px solid var(--hairline)}
+.pb-title{font-family:var(--font-m);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--steel)}
+.pb-close{margin-left:auto;background:none;border:1px solid var(--hairline-strong);border-radius:var(--r-s);
+  color:var(--snow);width:32px;height:32px;font-size:14px;cursor:pointer;transition:border-color .15s,background .15s}
+.pb-close:hover{border-color:#F87171;background:rgba(248,113,113,.1)}
+.player-win video{display:block;width:100%;max-height:74vh;background:#05080D}
+@media (max-width:640px){.player{padding:12px}.film-grid{grid-template-columns:1fr}}
