@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://hazzy3525-create.github.io/seversvet/sitemap.xml
+Sitemap: https://monolithapp.github.io/seversvet/sitemap.xml
