@@ -2,7 +2,7 @@
 
 /* ── заявка: позиции + параметры расчёта, живут между страницами ── */
 let cart = [];
-let order = { shifts: 1, ship: 'msk', from: '', to: '' };
+let order = { shifts: 1, ship: 'msk', from: '', to: '', mode: 'day' };
 try { cart = JSON.parse(localStorage.getItem('sv-cart') || '[]'); } catch (e) {}
 try { Object.assign(order, JSON.parse(localStorage.getItem('sv-order') || '{}')); } catch (e) {}
 cart.forEach(c => { c.qty = c.qty || 1; c.max = c.max || 1; });
@@ -31,16 +31,21 @@ const SHIP = {
   msk:    { n: 'Москва', free: 10000, fee: 1000 },
   mo:     { n: 'Московская область', free: 30000, fee: 2000 },
 };
+/* смена — сутки; полусмена 6 часов идёт за 70% суточной, скидка за срок на неё не действует */
+const HALF_RATE = .7;
 function calcOrder() {
   const base = cart.reduce((s, c) => s + (c.price || 0) * c.qty, 0);
-  const shifts = clamp(+order.shifts || 1, 1, 60);
-  const disc = shifts >= 7 ? .30 : shifts >= 3 ? .15 : 0;
-  const full = base * shifts;
+  const half = order.mode === 'half';
+  const shifts = half ? 1 : clamp(+order.shifts || 1, 1, 60);
+  const rate = half ? Math.round(base * HALF_RATE) : base;
+  const disc = half ? 0 : shifts >= 7 ? .20 : shifts >= 3 ? .10 : 0;
+  const full = rate * shifts;
   const rent = Math.round(full * (1 - disc));
   const s = SHIP[order.ship] || SHIP.msk;
-  /* порог считается по аренде за смену — так же, как написано в условиях */
-  const delivery = s.fee && base < s.free ? s.fee : 0;
-  return { base, shifts, disc, full, rent, delivery, total: rent + delivery, ship: s };
+  /* порог считается по аренде за смену — так же, как написано в условиях;
+     на шестичасовой аренде доставка и забор платные всегда */
+  const delivery = s.fee && (half || base < s.free) ? s.fee : 0;
+  return { base, half, rate, shifts, disc, full, rent, delivery, total: rent + delivery, ship: s };
 }
 
 function saveCart() {
@@ -55,10 +60,11 @@ function renderTotals() {
   const t = calcOrder();
   const row = (k, v, cls = '') => `<div class="tr ${cls}"><span>${k}</span><b>${v}</b></div>`;
   box.innerHTML =
-    row('Аренда за смену', money(t.base) + ' ₽') +
-    (t.shifts > 1 ? row(`${t.shifts} ${shiftWord(t.shifts)} по 12 ч`, money(t.full) + ' ₽') : '') +
+    row('Аренда за сутки', money(t.base) + ' ₽') +
+    (t.half ? row('Смена 6 часов — 70%', money(t.rate) + ' ₽', 'off') : '') +
+    (t.shifts > 1 ? row(`${t.shifts} ${shiftWord(t.shifts)}`, money(t.full) + ' ₽') : '') +
     (t.disc ? row(`Скидка за срок −${t.disc * 100 | 0}%`, '−' + money(t.full - t.rent) + ' ₽', 'off') : '') +
-    row('Доставка · ' + t.ship.n, t.delivery ? money(t.delivery) + ' ₽' : 'бесплатно') +
+    row((t.half ? 'Доставка и забор · ' : 'Доставка · ') + t.ship.n, t.delivery ? money(t.delivery) + ' ₽' : 'бесплатно') +
     `<div class="tr sum"><span>Ориентир по заявке</span><b>${money(t.total)} ₽</b></div>` +
     `<p class="t-note">Предварительный расчёт, не оферта: комплектом считаем отдельно и обычно дешевле.
      Залог не берём, техника оформляется договором.</p>`;
@@ -243,7 +249,7 @@ if (catalogRoot && typeof CATALOG !== 'undefined') {
         <div class="i-top"><h4>${it.n}</h4><span class="qty">${it.q}</span></div>
         <p>${it.d}</p>
         <div class="i-foot">
-          <span class="price">${it.p ? `от <b>${money(it.p)} ₽</b> / смена` : 'цена — по запросу'}</span>
+          <span class="price">${it.p ? `от <b>${money(it.p)} ₽</b> / сутки` : 'цена — по запросу'}</span>
           <button class="add" data-id="${id}" data-name="${it.n.replace(/"/g, '&quot;')}" data-price="${it.p || 0}" data-max="${stockOf(it.q)}" aria-label="Добавить в заявку: ${it.n.replace(/"/g, '&quot;')}">В заявку</button>
         </div>`;
       grid.appendChild(card);
@@ -299,24 +305,38 @@ if (buildBtn) {
     });
   });
 
-  const shiftsEl = $('f-shifts'), shipEl = $('f-ship');
+  const shiftsEl = $('f-shifts'), shipEl = $('f-ship'), modeEl = $('f-mode');
   shiftsEl.value = order.shifts || 1;
   shipEl.value = order.ship || 'msk';
+  modeEl.value = order.mode || 'day';
   $('f-from').value = order.from || draft['f-from'] || '';
   $('f-to').value = order.to || draft['f-to'] || '';
 
-  /* даты ведут число смен: две даты подряд = две смены */
+  /* шесть часов берут разово: счётчик суток на это время не работает */
+  function syncMode() {
+    order.mode = modeEl.value;
+    const half = order.mode === 'half';
+    shiftsEl.disabled = half;
+    shiftsEl.value = half ? 1 : order.shifts;
+    saveCart();
+  }
+  /* даты ведут число смен: две даты подряд = двое суток */
   function syncShiftsFromDates() {
     const from = $('f-from').value, to = $('f-to').value;
     order.from = from; order.to = to;
     if (from && to) {
       const days = Math.round((new Date(to) - new Date(from)) / 86400000) + 1;
-      if (days >= 1) { order.shifts = clamp(days, 1, 60); shiftsEl.value = order.shifts; }
+      if (days >= 1) {
+        order.shifts = clamp(days, 1, 60);
+        if (order.mode !== 'half') shiftsEl.value = order.shifts;
+      }
     }
     saveCart();
   }
   shiftsEl.addEventListener('input', () => { order.shifts = clamp(+shiftsEl.value || 1, 1, 60); saveCart(); });
   shipEl.addEventListener('change', () => { order.ship = shipEl.value; saveCart(); });
+  modeEl.addEventListener('change', syncMode);
+  syncMode();
   syncShiftsFromDates();
 
   buildBtn.onclick = async () => {
@@ -333,18 +353,20 @@ if (buildBtn) {
     const t = calcOrder();
     let text = `ЗАЯВКА · СЕВЕРСВЕТ × MONOLITH7\n`;
     text += `\nИмя: ${name}\nКонтакт: ${contact}\nЗадача: ${$('f-type').value}\nФормат: ${$('f-need').value}`;
-    if (from) text += `\nДаты: ${ruDate(from)}${to && to !== from ? ' — ' + ruDate(to) : ''} (${t.shifts} ${shiftWord(t.shifts)})`;
+    /* на шестичасовой смене вторая дата только путает: техника уходит и возвращается в один день */
+    if (from) text += `\nДаты: ${ruDate(from)}${to && to !== from && !t.half ? ' — ' + ruDate(to) : ''} (${t.half ? 'смена 6 часов' : `${t.shifts} ${shiftWord(t.shifts)} по суткам`})`;
     const msg = $('f-msg').value.trim();
     if (msg) text += `\nО проекте: ${msg}`;
     if (cart.length) {
       text += `\n\nТехника (${cart.length} поз.):`;
-      cart.forEach(c => text += `\n— ${c.name}${c.qty > 1 ? ` ×${c.qty}` : ''}${c.price ? ` — ${money(c.price * c.qty)} ₽/смена` : ''}`);
+      cart.forEach(c => text += `\n— ${c.name}${c.qty > 1 ? ` ×${c.qty}` : ''}${c.price ? ` — ${money(c.price * c.qty)} ₽/сутки` : ''}`);
       text += `\n\nРАСЧЁТ (ориентир)`;
-      text += `\nАренда за смену: ${money(t.base)} ₽`;
-      if (t.shifts > 1) text += `\nСмен: ${t.shifts} → ${money(t.full)} ₽`;
+      text += `\nАренда за сутки: ${money(t.base)} ₽`;
+      if (t.half) text += `\nСмена 6 часов — 70%: ${money(t.rate)} ₽`;
+      if (t.shifts > 1) text += `\nСуток: ${t.shifts} → ${money(t.full)} ₽`;
       // скидка и доставка ниже — порядок строк повторяет расчёт на сайте
       if (t.disc) text += `\nСкидка за срок −${t.disc * 100 | 0}%: −${money(t.full - t.rent)} ₽`;
-      text += `\nДоставка (${t.ship.n}): ${t.delivery ? money(t.delivery) + ' ₽' : 'бесплатно'}`;
+      text += `\n${t.half ? 'Доставка и забор' : 'Доставка'} (${t.ship.n}): ${t.delivery ? money(t.delivery) + ' ₽' : 'бесплатно'}`;
       text += `\nИТОГО ориентир: ${money(t.total)} ₽`;
     }
     text += `\n\n(заявка собрана на сайте СЕВЕРСВЕТ × MONOLITH7)`;

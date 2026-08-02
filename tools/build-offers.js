@@ -24,7 +24,7 @@ const offer = it => {
   if (it.p) {
     o.priceSpecification = {
       '@type': 'UnitPriceSpecification',
-      price: it.p, priceCurrency: 'RUB', unitText: 'смена 12 часов',
+      price: it.p, priceCurrency: 'RUB', unitText: 'смена — сутки',
     };
   }
   return o;
@@ -36,7 +36,7 @@ const data = {
   '@type': 'Service',
   serviceType: 'Аренда съёмочной техники',
   name: 'Аренда съёмочной техники — СЕВЕРСВЕТ',
-  description: `Прокат кинокамер, оптики, света, звука, грипа и эфирного тракта в Москве и Московской области. ${total} позиций, выдача поэлементно или комплектом, смена 12 часов.`,
+  description: `Прокат кинокамер, оптики, света, звука, грипа и эфирного тракта в Москве и Московской области. ${total} позиций, выдача поэлементно или комплектом, смена — сутки, есть вариант на 6 часов за 70% цены.`,
   url: BASE + 'tech.html',
   image: BASE + 'assets/og-tech.jpg',
   provider: {

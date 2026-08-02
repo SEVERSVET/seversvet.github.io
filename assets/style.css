@@ -351,6 +351,10 @@ section{padding:88px 0}
   white-space:nowrap;font-variant-numeric:tabular-nums;min-width:64px;text-align:right}
 .rc-calc{margin-top:18px;padding-top:18px;border-top:1px solid var(--hairline-strong)}
 .rc-calc .rc-row{display:grid;grid-template-columns:110px 1fr;gap:12px}
+.rc-calc .rc-row+.rc-row{margin-top:12px}
+.rc-calc .rc-row.solo{grid-template-columns:1fr}
+/* при шестичасовой смене счётчик суток отключён — видно, что поле не работает */
+.rc-calc input:disabled{opacity:.4;cursor:not-allowed}
 .rc-calc label{display:block;font-size:12px;font-weight:700;color:var(--steel-dim);margin-bottom:7px;
   letter-spacing:.02em}
 #cart-total{margin-top:20px}
