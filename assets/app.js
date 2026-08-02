@@ -1,8 +1,12 @@
 /* СЕВЕРСВЕТ × MONOLITH7 — общая логика страниц */
 
-/* ── корзина (живёт между страницами) ── */
+/* ── заявка: позиции + параметры расчёта, живут между страницами ── */
 let cart = [];
+let order = { shifts: 1, ship: 'msk', from: '', to: '' };
 try { cart = JSON.parse(localStorage.getItem('sv-cart') || '[]'); } catch (e) {}
+try { Object.assign(order, JSON.parse(localStorage.getItem('sv-order') || '{}')); } catch (e) {}
+cart.forEach(c => { c.qty = c.qty || 1; c.max = c.max || 1; });
+
 const cartCount = document.getElementById('cart-count');
 const toast = document.getElementById('toast');
 let toastTimer;
@@ -13,27 +17,77 @@ function showToast(msg) {
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => toast.classList.remove('show'), 2600);
 }
-const money = n => n.toLocaleString('ru-RU');
-const cartSum = () => cart.reduce((s, c) => s + (c.price || 0), 0);
+const money = n => Math.round(n).toLocaleString('ru-RU');
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const plural = (n, f) => f[n % 10 === 1 && n % 100 !== 11 ? 0
+  : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20) ? 1 : 2];
+const shiftWord = n => plural(n, ['смена', 'смены', 'смен']);
+/* «4 шт.» / «2 компл.» → сколько единиц реально есть в парке */
+const stockOf = q => clamp(parseInt(q, 10) || 1, 1, 99);
 
-function saveCart() { localStorage.setItem('sv-cart', JSON.stringify(cart)); renderCartUI(); }
+/* условия доставки продублированы в разделе «Как устроена аренда» — менять надо в обоих местах */
+const SHIP = {
+  pickup: { n: 'Самовывоз', free: 0, fee: 0 },
+  msk:    { n: 'Москва', free: 10000, fee: 1000 },
+  mo:     { n: 'Московская область', free: 30000, fee: 2000 },
+};
+function calcOrder() {
+  const base = cart.reduce((s, c) => s + (c.price || 0) * c.qty, 0);
+  const shifts = clamp(+order.shifts || 1, 1, 60);
+  const disc = shifts >= 7 ? .30 : shifts >= 3 ? .15 : 0;
+  const full = base * shifts;
+  const rent = Math.round(full * (1 - disc));
+  const s = SHIP[order.ship] || SHIP.msk;
+  /* порог считается по аренде за смену — так же, как написано в условиях */
+  const delivery = s.fee && base < s.free ? s.fee : 0;
+  return { base, shifts, disc, full, rent, delivery, total: rent + delivery, ship: s };
+}
+
+function saveCart() {
+  localStorage.setItem('sv-cart', JSON.stringify(cart));
+  localStorage.setItem('sv-order', JSON.stringify(order));
+  renderCartUI();
+}
+function renderTotals() {
+  const box = document.getElementById('cart-total');
+  if (!box) return;
+  if (!cart.length) { box.innerHTML = ''; return; }
+  const t = calcOrder();
+  const row = (k, v, cls = '') => `<div class="tr ${cls}"><span>${k}</span><b>${v}</b></div>`;
+  box.innerHTML =
+    row('Аренда за смену', money(t.base) + ' ₽') +
+    (t.shifts > 1 ? row(`${t.shifts} ${shiftWord(t.shifts)} по 12 ч`, money(t.full) + ' ₽') : '') +
+    (t.disc ? row(`Скидка за срок −${t.disc * 100 | 0}%`, '−' + money(t.full - t.rent) + ' ₽', 'off') : '') +
+    row('Доставка · ' + t.ship.n, t.delivery ? money(t.delivery) + ' ₽' : 'бесплатно') +
+    `<div class="tr sum"><span>Ориентир по заявке</span><b>${money(t.total)} ₽</b></div>` +
+    `<p class="t-note">Предварительный расчёт, не оферта: комплектом считаем отдельно и обычно дешевле.
+     Залог не берём, техника оформляется договором.</p>`;
+}
 function renderCartUI() {
-  if (cartCount) cartCount.textContent = cart.length;
+  if (cartCount) cartCount.textContent = cart.reduce((n, c) => n + c.qty, 0);
   const list = document.getElementById('cart-list');
   const empty = document.getElementById('cart-empty');
-  const total = document.getElementById('cart-total');
-  if (total) {
-    const sum = cartSum();
-    total.innerHTML = cart.length
-      ? `Ориентир за смену: <b>${money(sum)} ₽</b><span>от 3 суток −15% · от 7 суток −30%</span>`
-      : '';
-  }
+  const calc = document.getElementById('rc-calc');
+  if (calc) calc.hidden = !cart.length;
+  renderTotals();
   if (!list) return;
   list.innerHTML = '';
-  if (empty) empty.style.display = cart.length ? 'none' : 'block';
+  if (empty) empty.hidden = !!cart.length;
   cart.forEach((c, i) => {
     const li = document.createElement('li');
-    li.innerHTML = `<span>${c.name}</span>${c.price ? `<i class="pr">${money(c.price)} ₽</i>` : ''}<button class="rm" aria-label="Убрать">✕</button>`;
+    li.innerHTML = `
+      <span class="nm">${c.name}</span>
+      <span class="qty-box">
+        <button class="qb" data-d="-1" aria-label="Убавить количество">−</button>
+        <i class="q">${c.qty}</i>
+        <button class="qb" data-d="1" aria-label="Прибавить количество"${c.qty >= c.max ? ' disabled' : ''}>+</button>
+      </span>
+      ${c.price ? `<i class="pr">${money(c.price * c.qty)} ₽</i>` : ''}
+      <button class="rm" aria-label="Убрать позицию">✕</button>`;
+    li.querySelectorAll('.qb').forEach(b => b.onclick = () => {
+      c.qty = clamp(c.qty + +b.dataset.d, 1, c.max);
+      saveCart();
+    });
     li.querySelector('.rm').onclick = () => { cart.splice(i, 1); saveCart(); syncButtons(); };
     list.appendChild(li);
   });
@@ -190,7 +244,7 @@ if (catalogRoot && typeof CATALOG !== 'undefined') {
         <p>${it.d}</p>
         <div class="i-foot">
           <span class="price">${it.p ? `от <b>${money(it.p)} ₽</b> / смена` : 'цена — по запросу'}</span>
-          <button class="add" data-id="${id}" data-name="${it.n.replace(/"/g, '&quot;')}" data-price="${it.p || 0}" aria-label="Добавить в заявку: ${it.n.replace(/"/g, '&quot;')}">В заявку</button>
+          <button class="add" data-id="${id}" data-name="${it.n.replace(/"/g, '&quot;')}" data-price="${it.p || 0}" data-max="${stockOf(it.q)}" aria-label="Добавить в заявку: ${it.n.replace(/"/g, '&quot;')}">В заявку</button>
         </div>`;
       grid.appendChild(card);
     });
@@ -207,7 +261,7 @@ if (catalogRoot && typeof CATALOG !== 'undefined') {
     const id = b.dataset.id, name = b.dataset.name, price = +b.dataset.price || 0;
     const idx = cart.findIndex(c => c.id === id);
     if (idx >= 0) { cart.splice(idx, 1); showToast('Убрано из заявки'); }
-    else { cart.push({ id, name, price }); showToast('Добавлено в заявку: ' + name); }
+    else { cart.push({ id, name, price, qty: 1, max: +b.dataset.max || 1 }); showToast('Добавлено в заявку: ' + name); }
     saveCart(); syncButtons();
   });
   syncButtons();
@@ -223,35 +277,86 @@ if (!catalogRoot && typeof CATALOG !== 'undefined') {
 
 /* ── форма заявки ── */
 const buildBtn = document.getElementById('build-req');
+const $ = id => document.getElementById(id);
+const FORM_FIELDS = ['f-name', 'f-contact', 'f-from', 'f-to', 'f-type', 'f-need', 'f-msg'];
+const ruDate = s => {
+  const d = new Date(s + 'T00:00');
+  return isNaN(d) ? s : d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' });
+};
+
 if (buildBtn) {
+  /* черновик: заявку часто собирают в несколько заходов, между вкладками каталога */
+  let draft = {};
+  try { draft = JSON.parse(localStorage.getItem('sv-form') || '{}'); } catch (e) {}
+  FORM_FIELDS.forEach(id => {
+    const el = $(id);
+    if (draft[id]) el.value = draft[id];
+    el.addEventListener('input', () => {
+      draft[id] = el.value;
+      localStorage.setItem('sv-form', JSON.stringify(draft));
+      el.classList.remove('invalid');
+      if (id === 'f-from' || id === 'f-to') syncShiftsFromDates();
+    });
+  });
+
+  const shiftsEl = $('f-shifts'), shipEl = $('f-ship');
+  shiftsEl.value = order.shifts || 1;
+  shipEl.value = order.ship || 'msk';
+  $('f-from').value = order.from || draft['f-from'] || '';
+  $('f-to').value = order.to || draft['f-to'] || '';
+
+  /* даты ведут число смен: две даты подряд = две смены */
+  function syncShiftsFromDates() {
+    const from = $('f-from').value, to = $('f-to').value;
+    order.from = from; order.to = to;
+    if (from && to) {
+      const days = Math.round((new Date(to) - new Date(from)) / 86400000) + 1;
+      if (days >= 1) { order.shifts = clamp(days, 1, 60); shiftsEl.value = order.shifts; }
+    }
+    saveCart();
+  }
+  shiftsEl.addEventListener('input', () => { order.shifts = clamp(+shiftsEl.value || 1, 1, 60); saveCart(); });
+  shipEl.addEventListener('change', () => { order.ship = shipEl.value; saveCart(); });
+  syncShiftsFromDates();
+
   buildBtn.onclick = async () => {
-    const name = document.getElementById('f-name').value.trim();
-    const contact = document.getElementById('f-contact').value.trim();
-    if (!name || !contact) { showToast('Заполните имя и контакт — иначе не сможем ответить'); return; }
-    const dates = document.getElementById('f-dates').value.trim();
-    const type = document.getElementById('f-type').value;
-    const need = document.getElementById('f-need').value;
-    const msg = document.getElementById('f-msg').value.trim();
+    const name = $('f-name').value.trim();
+    const contact = $('f-contact').value.trim();
+    const bad = [!name && 'f-name', !contact && 'f-contact'].filter(Boolean);
+    if (bad.length) {
+      bad.forEach(id => $(id).classList.add('invalid'));
+      $(bad[0]).focus();
+      showToast('Заполните имя и контакт — иначе не сможем ответить');
+      return;
+    }
+    const from = $('f-from').value, to = $('f-to').value;
+    const t = calcOrder();
     let text = `ЗАЯВКА · СЕВЕРСВЕТ × MONOLITH7\n`;
-    text += `\nИмя: ${name}\nКонтакт: ${contact}\nЗадача: ${type}\nФормат: ${need}`;
-    if (dates) text += `\nДаты: ${dates}`;
+    text += `\nИмя: ${name}\nКонтакт: ${contact}\nЗадача: ${$('f-type').value}\nФормат: ${$('f-need').value}`;
+    if (from) text += `\nДаты: ${ruDate(from)}${to && to !== from ? ' — ' + ruDate(to) : ''} (${t.shifts} ${shiftWord(t.shifts)})`;
+    const msg = $('f-msg').value.trim();
     if (msg) text += `\nО проекте: ${msg}`;
     if (cart.length) {
       text += `\n\nТехника (${cart.length} поз.):`;
-      cart.forEach(c => text += `\n— ${c.name}${c.price ? ` — ${money(c.price)} ₽/смена` : ''}`);
-      const sum = cartSum();
-      if (sum) text += `\n\nОриентир за смену: ${money(sum)} ₽ (без скидок за срок и доставки)`;
+      cart.forEach(c => text += `\n— ${c.name}${c.qty > 1 ? ` ×${c.qty}` : ''}${c.price ? ` — ${money(c.price * c.qty)} ₽/смена` : ''}`);
+      text += `\n\nРАСЧЁТ (ориентир)`;
+      text += `\nАренда за смену: ${money(t.base)} ₽`;
+      if (t.shifts > 1) text += `\nСмен: ${t.shifts} → ${money(t.full)} ₽`;
+      // скидка и доставка ниже — порядок строк повторяет расчёт на сайте
+      if (t.disc) text += `\nСкидка за срок −${t.disc * 100 | 0}%: −${money(t.full - t.rent)} ₽`;
+      text += `\nДоставка (${t.ship.n}): ${t.delivery ? money(t.delivery) + ' ₽' : 'бесплатно'}`;
+      text += `\nИТОГО ориентир: ${money(t.total)} ₽`;
     }
     text += `\n\n(заявка собрана на сайте СЕВЕРСВЕТ × MONOLITH7)`;
-    const out = document.getElementById('req-out');
-    document.getElementById('req-text').value = text;
+    const out = $('req-out');
+    $('req-text').value = text;
     out.classList.add('show');
     try { await navigator.clipboard.writeText(text); showToast('Заявка скопирована — вставьте её в Telegram'); }
     catch (e) { showToast('Заявка собрана — скопируйте текст вручную'); }
     out.scrollIntoView({ behavior: 'smooth', block: 'center' });
   };
-  document.getElementById('copy-req').onclick = async () => {
-    const t = document.getElementById('req-text');
+  $('copy-req').onclick = async () => {
+    const t = $('req-text');
     try { await navigator.clipboard.writeText(t.value); showToast('Скопировано'); }
     catch (e) { t.select(); document.execCommand('copy'); showToast('Скопировано'); }
   };

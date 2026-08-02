@@ -175,8 +175,64 @@
   </div>
 </section>
 
+<!-- ВОПРОСЫ -->
+<section id="faq" style="background:var(--night-2);border-top:1px solid var(--hairline)">
+  <div class="wrap">
+    <div class="sec-tag">// Частые вопросы</div>
+    <h2 class="sec-title">О чём спрашивают до съёмки</h2>
+    <p class="sec-sub">Короткие ответы на то, что обычно выясняется в переписке.
+    Если вопроса тут нет — напишите, ответим лично.</p>
+    <div class="faq">
+      <details class="qa">
+        <summary>Нужен ли залог?</summary>
+        <p>Нет. Аренда оформляется договором и актом приёма-передачи, залог мы не берём.
+        Из документов нужен паспорт — данные идут в договор.</p>
+      </details>
+      <details class="qa">
+        <summary>Как оформляется аренда и оплата?</summary>
+        <p>Договор аренды + акт приёма-передачи на конкретные позиции. Артём — самозанятый,
+        после оплаты приходит чек из «Мой налог»: расходы можно спокойно проводить по бухгалтерии.
+        Оплата наличными или переводом, по договорённости.</p>
+      </details>
+      <details class="qa">
+        <summary>Сколько длится смена и что считается переработкой?</summary>
+        <p>Смена — 12 часов, цена на карточке указана за неё. Если площадка затянулась,
+        доплата считается по факту, а не по штрафной ставке: предупредите заранее — договоримся на месте.</p>
+      </details>
+      <details class="qa">
+        <summary>Что будет, если технику повредили на площадке?</summary>
+        <p>Комплект осматриваем вместе при выдаче и при возврате — это отдельный пункт договора.
+        Если что-то пострадало, решаем по факту: ремонт или компенсация стоимости, без штрафов сверху.</p>
+      </details>
+      <details class="qa">
+        <summary>Можно ли взять технику с оператором?</summary>
+        <p>Да, это основной формат. Парк выезжает с командой MONOLITH7 — от одного оператора
+        до полной группы с гаффером, звуком, DIT и колористом. В заявке отметьте
+        «Техника + операторская группа» или «Продакшен под ключ».</p>
+      </details>
+      <details class="qa">
+        <summary>Как быстро вы подаёте технику?</summary>
+        <p>По Москве и области — в день обращения, если позиции свободны. Вся техника ездит
+        на личном автомобиле, поэтому нет ни трансферных расходов, ни ожидания курьера.
+        Срочная съёмка — звоните, а не пишите.</p>
+      </details>
+      <details class="qa">
+        <summary>Выезжаете в другие города?</summary>
+        <p>Да, командировки по всей России. Дорога и суточные считаются отдельной строкой
+        и обсуждаются до выезда — сюрпризов в счёте не будет.</p>
+      </details>
+      <details class="qa">
+        <summary>Есть ли скидки на длинную аренду?</summary>
+        <p>От 3 суток — минус 15%, от 7 суток — минус 30%; расчёт в форме заявки это уже учитывает.
+        Комплект под проект считаем отдельно, обычно выходит дешевле поэлементной сборки.
+        Для проектов с жёстким бюджетом есть персональные условия.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
 <!-- ЗАЯВКА -->
-<section id="request" style="background:var(--night-2);border-top:1px solid var(--hairline)">
+<section id="request" style="border-top:1px solid var(--hairline)">
   <div class="wrap">
     <div class="sec-tag">// Заявка</div>
     <h2 class="sec-title">Собрать заявку</h2>
@@ -184,15 +240,27 @@
     Останется отправить его нам в Telegram одной кнопкой.</p>
     <div class="req-box">
       <div class="req-form" style="background:var(--night)">
-        <label for="f-name">Как вас зовут *</label>
-        <input id="f-name" type="text" autocomplete="name" placeholder="Имя">
-        <label for="f-contact">Телефон или Telegram *</label>
-        <input id="f-contact" type="text" autocomplete="tel" placeholder="+7 ··· ··· ·· ·· или @username">
         <div class="row2">
           <div>
-            <label for="f-dates">Даты съёмки / аренды</label>
-            <input id="f-dates" type="text" placeholder="например, 12–14 сентября">
+            <label for="f-name">Как вас зовут <i>*</i></label>
+            <input id="f-name" type="text" autocomplete="name" placeholder="Имя">
           </div>
+          <div>
+            <label for="f-contact">Телефон или Telegram <i>*</i></label>
+            <input id="f-contact" type="text" autocomplete="tel" placeholder="+7 ··· ··· ·· ·· или @username">
+          </div>
+        </div>
+        <div class="row2">
+          <div>
+            <label for="f-from">Первая смена</label>
+            <input id="f-from" type="date">
+          </div>
+          <div>
+            <label for="f-to">Последняя смена</label>
+            <input id="f-to" type="date">
+          </div>
+        </div>
+        <div class="row2">
           <div>
             <label for="f-type">Что за задача</label>
             <select id="f-type">
@@ -207,32 +275,52 @@
               <option>Другое</option>
             </select>
           </div>
+          <div>
+            <label for="f-need">Что нужно</label>
+            <select id="f-need">
+              <option>Только техника</option>
+              <option>Техника + операторская группа</option>
+              <option>Продакшен под ключ (техника + команда + пост)</option>
+            </select>
+          </div>
         </div>
-        <label for="f-need">Что нужно</label>
-        <select id="f-need">
-          <option>Только техника</option>
-          <option>Техника + операторская группа</option>
-          <option>Продакшен под ключ (техника + команда + пост)</option>
-        </select>
         <label for="f-msg">Пара слов о проекте</label>
         <textarea id="f-msg" placeholder="Локация, хронометраж, референсы — что угодно, что поможет понять задачу"></textarea>
         <button class="btn btn-primary" id="build-req">Собрать заявку</button>
         <div class="req-out" id="req-out">
-          <label for="req-text" style="margin-top:22px">Текст заявки — скопирован автоматически</label>
+          <label for="req-text" style="margin-top:22px">Текст заявки — уже в буфере обмена</label>
           <textarea id="req-text" readonly></textarea>
           <div class="out-btns">
+            <a class="btn btn-primary wide" id="send-tg" href="https://t.me/Manzhet" target="_blank" rel="noopener">Отправить в Telegram Артёму →</a>
+            <a class="btn btn-ghost" href="https://t.me/sbphotoshoter" target="_blank" rel="noopener">Написать Савелию</a>
             <button class="btn btn-ghost" id="copy-req">Скопировать ещё раз</button>
-            <a class="btn btn-primary" href="https://t.me/Manzhet" target="_blank" rel="noopener">Отправить Артёму →</a>
-            <a class="btn btn-primary" href="https://t.me/sbphotoshoter" target="_blank" rel="noopener">Отправить Савелию →</a>
           </div>
+          <p class="out-note">В Telegram останется вставить текст (Ctrl+V) и отправить. Отвечаем в течение дня,
+          по срочным съёмкам — сразу.</p>
         </div>
       </div>
       <div class="req-cart" style="background:var(--night)">
         <h3>Техника в заявке</h3>
         <div class="rc-sub">Добавляйте позиции из каталога кнопкой «В заявку»</div>
         <ul id="cart-list"></ul>
-        <div id="cart-total"></div>
         <div id="cart-empty">Пока пусто. Отметьте нужное в <a href="#catalog" style="color:var(--aurora-c)">каталоге</a> — или просто опишите задачу словами, подберём сами.</div>
+        <div class="rc-calc" id="rc-calc" hidden>
+          <div class="rc-row">
+            <div>
+              <label for="f-shifts">Смен по 12 ч</label>
+              <input id="f-shifts" type="number" min="1" max="60" step="1" value="1" inputmode="numeric">
+            </div>
+            <div>
+              <label for="f-ship">Доставка</label>
+              <select id="f-ship">
+                <option value="msk">Москва</option>
+                <option value="mo">Московская область</option>
+                <option value="pickup">Самовывоз</option>
+              </select>
+            </div>
+          </div>
+          <div id="cart-total"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -282,6 +370,30 @@
       { "@type": "OfferCatalog", "name": "Специальное оборудование и аксессуары" }
     ]
   }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    { "@type": "Question", "name": "Нужен ли залог?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Нет. Аренда оформляется договором и актом приёма-передачи, залог мы не берём. Из документов нужен паспорт — данные идут в договор." } },
+    { "@type": "Question", "name": "Как оформляется аренда и оплата?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Договор аренды и акт приёма-передачи на конкретные позиции. Арендодатель — самозанятый, после оплаты приходит чек из «Мой налог», расходы можно проводить по бухгалтерии. Оплата наличными или переводом." } },
+    { "@type": "Question", "name": "Сколько длится смена и что считается переработкой?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Смена — 12 часов, цена на карточке указана за неё. Если площадка затянулась, доплата считается по факту, а не по штрафной ставке." } },
+    { "@type": "Question", "name": "Что будет, если технику повредили на площадке?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Комплект осматривается вместе при выдаче и при возврате — это отдельный пункт договора. Если что-то пострадало, вопрос решается по факту: ремонт или компенсация стоимости, без штрафов сверху." } },
+    { "@type": "Question", "name": "Можно ли взять технику с оператором?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Да. Парк выезжает с командой MONOLITH7 — от одного оператора до полной группы с гаффером, звуком, DIT и колористом." } },
+    { "@type": "Question", "name": "Как быстро подаётся техника?",
+      "acceptedAnswer": { "@type": "Answer", "text": "По Москве и Московской области — в день обращения, если позиции свободны. Техника перевозится на личном автомобиле, без трансферных расходов и ожидания курьера." } },
+    { "@type": "Question", "name": "Выезжаете в другие города?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Да, командировки по всей России. Дорога и суточные считаются отдельной строкой и обсуждаются до выезда." } },
+    { "@type": "Question", "name": "Есть ли скидки на длинную аренду?",
+      "acceptedAnswer": { "@type": "Answer", "text": "От 3 суток — минус 15%, от 7 суток — минус 30%. Комплект под проект считается отдельно и обычно выходит дешевле поэлементной сборки. Для проектов с ограниченным бюджетом есть персональные условия." } }
+  ]
 }
 </script>
 <script src="assets/catalog.js?v=7"></script>
