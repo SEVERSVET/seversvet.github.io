@@ -321,6 +321,7 @@ if (catalogRoot && typeof CATALOG !== 'undefined') {
 const statFilms = document.getElementById('stat-films');
 if (statFilms && typeof FILMS !== 'undefined') {
   statFilms.textContent = FILMS.length;
+  document.getElementById('stat-vert').textContent = FILMS.filter(f => f.v).length;
   document.getElementById('stat-shots').textContent = SHOTS.length;
   document.getElementById('stat-genres').textContent = FILM_GROUPS.length;
 }
@@ -500,11 +501,15 @@ if (shotsRoot && typeof SHOTS !== 'undefined') {
 /* окно просмотра ролика */
 const player = document.getElementById('player');
 const playerVideo = document.getElementById('player-video');
-function openFilm(id, title) {
+const playerWin = player && player.querySelector('.player-win');
+function openFilm(f) {
   if (!player) return;
-  document.getElementById('player-title').textContent = title;
-  playerVideo.src = `assets/film/${id}.mp4`;
-  playerVideo.poster = `assets/film/${id}.webp`;
+  document.getElementById('player-title').textContent = f.t;
+  playerVideo.src = `assets/film/${f.id}.mp4`;
+  playerVideo.poster = `assets/film/${f.id}.webp`;
+  /* вертикальный ролик в широком окне — это две чёрные полосы по бокам:
+     окно сужаем под кадр 9:16, ширину мастера (720px) не превышаем */
+  playerWin.classList.toggle('vert', !!f.v);
   player.hidden = false;
   document.body.style.overflow = 'hidden';
   playerVideo.play().catch(() => {});
@@ -525,7 +530,7 @@ if (player) {
 
 function filmCard(f) {
   const a = document.createElement('article');
-  a.className = 'film';
+  a.className = 'film' + (f.v ? ' vert' : '');
   a.innerHTML = `
     <button class="film-pic" aria-label="Смотреть: ${f.t}">
       <img src="assets/film/${f.id}.webp" alt="${f.t}" loading="lazy">
@@ -540,7 +545,7 @@ function filmCard(f) {
     </div>`;
   const pic = a.querySelector('.film-pic');
   const loop = a.querySelector('video');
-  pic.onclick = () => openFilm(f.id, f.t);
+  pic.onclick = () => openFilm(f);
   /* немой отрывок — только на устройствах с курсором, чтобы не жечь мобильный трафик */
   if (matchMedia('(hover:hover)').matches) {
     pic.addEventListener('mouseenter', () => {
@@ -568,11 +573,20 @@ if (reelBox && typeof FILMS !== 'undefined') {
 
 const filmsRoot = document.getElementById('films-root');
 if (filmsRoot && typeof FILMS !== 'undefined') {
+  const filmsNav = document.getElementById('films-nav');
   FILM_GROUPS.forEach(g => {
     const items = FILMS.filter(f => f.g === g.g);
     if (!items.length) return;
+    /* разделов стало шесть, страница идёт на несколько экранов — без якорей не долистать */
+    if (filmsNav) {
+      const a = document.createElement('a');
+      a.href = '#film-' + g.g;
+      a.innerHTML = `<span class="n">${g.n}</span>${g.t}`;
+      filmsNav.appendChild(a);
+    }
     const box = document.createElement('div');
     box.className = 'cat-group';
+    box.id = 'film-' + g.g;
     box.innerHTML = `
       <div class="cat-head">
         <span class="idx">${g.n}</span>
@@ -580,7 +594,7 @@ if (filmsRoot && typeof FILMS !== 'undefined') {
         <span class="cnt">${items.length} рол.</span>
       </div>
       <p class="cat-desc">${g.d}</p>
-      <div class="film-grid"></div>`;
+      <div class="film-grid${items.every(f => f.v) ? ' vert' : ''}"></div>`;
     const grid = box.querySelector('.film-grid');
     items.forEach(f => grid.appendChild(filmCard(f)));
     filmsRoot.appendChild(box);

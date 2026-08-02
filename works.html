@@ -27,7 +27,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;900&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&family=Oswald:wght@500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/style.css?v=11">
+<link rel="stylesheet" href="assets/style.css?v=12">
 </head>
 <body>
 
@@ -64,13 +64,15 @@
       <h1>Работы</h1>
       <p class="lede">Ролики, клипы, реклама и кино, снятые нашей командой на технику из каталога —
       от имиджевых фильмов для застройщика до короткого метра, снятого по своей инициативе.
-      Здесь выборка: работ за годы набралось на порядок больше, весь архив показываем по запросу.</p>
+      Отдельным разделом — вертикаль 9:16 под ленту и сторис. Здесь выборка: работ за годы
+      набралось на порядок больше, весь архив показываем по запросу.</p>
     </div>
     <!-- цифры считает app.js по данным portfolio.js — руками не проставлять -->
     <aside class="terms-card" aria-label="Портфолио в цифрах">
       <div class="tc-tag">// В цифрах</div>
       <ul>
         <li><b>Роликов в подборке</b><span id="stat-films">—</span></li>
+        <li><b>Из них вертикальных</b><span id="stat-vert">—</span></li>
         <li><b>Кадров в галерее</b><span id="stat-shots">—</span></li>
         <li><b>Жанров</b><span id="stat-genres">—</span></li>
         <li><b>Парк техники</b><span id="stat-items">—</span></li>
@@ -97,7 +99,9 @@
     <div class="sec-tag">// Ролики</div>
     <h2 class="sec-title">Что мы снимали</h2>
     <p class="sec-sub">Наведите на карточку — пойдёт немой отрывок. Клик открывает ролик в окне,
-    со звуком и в исходном для веба качестве.</p>
+    со звуком и в качестве, подготовленном для веба: горизонталь — 720p, вертикаль — 9:16
+    и своё узкое окно, как в телефоне.</p>
+    <nav class="cat-nav films-nav" id="films-nav" aria-label="Разделы роликов"></nav>
     <div id="films-root"></div>
   </div>
 </section>
@@ -173,8 +177,8 @@
   ]
 }
 </script>
-<script src="assets/catalog.js?v=11"></script>
-<script src="assets/portfolio.js?v=11"></script>
-<script src="assets/app.js?v=11"></script>
+<script src="assets/catalog.js?v=12"></script>
+<script src="assets/portfolio.js?v=12"></script>
+<script src="assets/app.js?v=12"></script>
 </body>
 </html>
